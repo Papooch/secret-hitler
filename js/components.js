@@ -8,7 +8,7 @@ function createListEntry(name) {
         .text("join")
         .click(()=>{
             console.log("joining " + name);
-            getGame(name)
+            AJAXgetGame(name)
                 .then((r)=>{
                     console.log(r['payload']);
                     drawGame(r['payload']);
@@ -44,7 +44,7 @@ function createPile(type, count) {
         var button_select = $("<button></button>")
             .addClass("draw")
             .text("draw 3")
-            .click(()=>console.log("drawn 3 from draw pile"));
+            .click(()=>AJAXdraw(gameid, playername));
         pile.append(button_select);
     }
     return pile;
@@ -68,4 +68,39 @@ function createPolicy(type, txt) {
         .css("min-width", "10px")
         .css("border", "solid black 1px")
         .css("background-color", color);
+}
+
+
+function createPresidentDialog(cards) {
+    var policy = $("<div></div>")
+        .addClass("policy_dialog")
+    cards.forEach(
+        function (type, i){
+            var button_select = $("<button></button>")
+                .text("Discard")
+                .addClass("button_discard")
+                .click(()=>AJAXpass(gameid, playername, i));
+            policy
+                .append(createPolicy(type))
+                .append(button_select);
+        }
+    );
+    return policy;
+}
+
+function createChancellorsDialog(cards) {
+    var policy = $("<div></div>")
+        .addClass("policy_dialog")
+    cards.forEach(
+        function (type, i){
+            var button_select = $("<button></button>")
+                .text("Enforce")
+                .addClass("button_discard")
+                .click(()=>AJAXenforce(gameid, playername, i));
+            policy
+                .append(createPolicy(type))
+                .append(button_select);
+        }
+    );
+    return policy;
 }

@@ -1,11 +1,11 @@
 function main() {
     if(gameid){
-        getGame(gameid)
+        AJAXgetGame(gameid, playername)
             .then((r)=>{
                 drawGame(r.payload);
             })
     }else{
-        getGames()
+        AJAXgetGames()
         .then(
             (r)=>{
                 $("#content").empty();

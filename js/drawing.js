@@ -6,6 +6,7 @@ function drawLobby(list) {
 }
 
 function drawGame(game) {
+    console.log(game);
     $("#content").append("Secret Hitler");
     drawPolicies(0, game['liberalPolicies'], 6);
     drawPolicies(1, game['fascistPolicies'], 5);
@@ -17,6 +18,14 @@ function drawGame(game) {
     
     $("#content").append("<br>Players:");
     drawPlayers(game['players']);
+
+    if(game.flags.isPresident){
+        console.log("drawing dialog p");
+        drawPresidentsDialog(game.presidentsHand);
+    }else if(game.flags.isChancellor){
+        console.log("drawing dialog ch");
+        drawChancellorsDialog(game.chancellorsHand);
+    }
 }
 
 
@@ -36,4 +45,12 @@ function drawPolicies(type, count, total){
     for(let i=0; i<total; i++){
         $("#content").append(createPolicy(i>=count?"empty":type, ""));
     }
+}
+
+function drawPresidentsDialog(cards){
+    $("#content").append(createPresidentDialog(cards));
+}
+
+function drawChancellorsDialog(cards){
+    $("#content").append(createChancellorsDialog(cards));
 }
