@@ -31,6 +31,17 @@ if (isset($_GET['action'])) {
                 $response['status'] = "ok";
                 saveGameFile($_GET['game']);
                 break;
+
+            case 'elect':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                if(!isset($_GET['id'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = selectChancellor($_GET['game'], $_GET['player'], $_GET['id']);
+                break;
             
             case 'draw':
                 if(!isset($_GET['player'])){

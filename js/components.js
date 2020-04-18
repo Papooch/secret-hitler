@@ -7,10 +7,8 @@ function createListEntry(name) {
         .addClass("join_game")
         .text("join")
         .click(()=>{
-            console.log("joining " + name);
             AJAXgetGame(name)
                 .then((r)=>{
-                    console.log(r['payload']);
                     drawGame(r['payload']);
                 }
                 );
@@ -21,19 +19,29 @@ function createListEntry(name) {
         .append(button_join);
 }
 
-function createPlayer(name) {
+function createPlayer(name, index, action=null, vote=null) {
     var el_name = $("<div></div>")
         .css("display","inline-block")
         .addClass("player_name")
         .text(name);
+
+    var player = $("<div></div>")
+        .addClass("player")
+        .append(el_name);
+    
     var button_select = $("<button></button>")
         .addClass("join_game")
-        .text("select")
-        .click(()=>console.log("selected player " + name));
-    return $("<div></div>")
-        .addClass("player")
-        .append(el_name)
-        .append(button_select);
+    
+    if(action != null){
+        if(action == "elect"){
+            button_select
+                .text("Elect as chancellor")
+                .click(()=>AJAXelect(gameid, playername, index));
+        }
+        player.append(button_select);
+    }
+        
+    return player
 }
 
 function createPile(type, count) {
@@ -50,6 +58,11 @@ function createPile(type, count) {
     return pile;
 }
 
+function createElectionTracker(count) {
+    return $("<div></div>")
+        .text("Election tracker: " + count);
+}
+
 function createPolicy(type, txt) {
     if(type=="empty"){
         var color = "white";
@@ -59,13 +72,12 @@ function createPolicy(type, txt) {
     if(type==1){
         var color = "red";
     }
-    console.log("creating policy " + type + " " + txt);
     return $("<div></div>")
         .text(txt)
         .addClass(type)
         .css("display", "inline-block")
-        .css("height", "20px")
-        .css("min-width", "10px")
+        .css("height", "50px")
+        .css("min-width", "30px")
         .css("border", "solid black 1px")
         .css("background-color", color);
 }
@@ -73,9 +85,9 @@ function createPolicy(type, txt) {
 
 function createPresidentDialog(cards) {
     var policy = $("<div></div>")
-        .addClass("policy_dialog")
+        .addClass("policy_dialog");
     cards.forEach(
-        function (type, i){
+        (type, i)=>{
             var button_select = $("<button></button>")
                 .text("Discard")
                 .addClass("button_discard")
@@ -90,9 +102,9 @@ function createPresidentDialog(cards) {
 
 function createChancellorsDialog(cards) {
     var policy = $("<div></div>")
-        .addClass("policy_dialog")
+        .addClass("policy_dialog");
     cards.forEach(
-        function (type, i){
+        (type, i)=>{
             var button_select = $("<button></button>")
                 .text("Enforce")
                 .addClass("button_discard")
@@ -103,4 +115,20 @@ function createChancellorsDialog(cards) {
         }
     );
     return policy;
+}
+
+function createVoteDialog() {
+    var dialog = $("<div></div>")
+        .addClass("vote_dialog");
+    var ja_button = $("<button></button>")
+        .addClass("ja_button")
+        .text("JA!")
+        .click(()=>AJAXvote(gameid, playername, 1));
+    var nein_button = $("<button></button>")
+        .addClass("nein_button")
+        .text("NEIN!")
+        .click(()=>AJAXvote(gameid, playername, 0));    
+    return dialog
+        .append(ja_button)
+        .append(nein_button);
 }

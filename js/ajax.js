@@ -5,7 +5,9 @@ function getData(data=null) {
         url: "php/interface.php",
         data: data,
         dataType: "json"
-    });
+    }).then((r)=>{
+        checkResponse(r)}
+    );
 }
 
 function AJAXcreateGame(game) {
@@ -20,7 +22,12 @@ function AJAXgetGame(game, player=null) {
     return getData({"action":"get_game", "game":game, "player":player});
 }
 
-function vote(game, player, vote) {
+
+function AJAXelect(game, player, id) {
+    return getData({"action":"elect", "game":game, "player":player, "id":id});
+}
+
+function AJAXvote(game, player, vote) {
     return getData({"action":"vote", "game":game, "player":player, "vote":vote});
 }
 

@@ -1,9 +1,6 @@
 function main() {
     if(gameid){
-        AJAXgetGame(gameid, playername)
-            .then((r)=>{
-                drawGame(r.payload);
-            })
+        refreshGame();
     }else{
         AJAXgetGames()
         .then(

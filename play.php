@@ -44,8 +44,8 @@ if(empty($issues)){
 }
 
 ?>
-<div id="content">
-</div>
+<div id="info">this is info</div>
+<div id="content"></div>
 
 <script>
     $(document).ready(main());

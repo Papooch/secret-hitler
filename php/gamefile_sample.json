@@ -1,0 +1,51 @@
+{
+    "phase": "PH_CHOOSE_CHANC",
+    "players": [
+        "ondra",
+        "marek",
+        "verunka",
+        "hrouda"
+    ],
+    "voting": {
+        "ondra": null,
+        "marek": null,
+        "verunka": null,
+        "hrouda": null
+    },
+    "president": 1,
+    "temporaryPresident": null,
+    "chancellor": 2,
+    "lastGovernment": [],
+    "hitler": 3,
+    "fascists": [2,3],
+    "confirmedNotHitler": [],
+    "dead": [],
+    "drawPile": [0,1,1,0,0,1,1,1,0,1,0,0,1],
+    "discardPile": [],
+    "presidentsHand": [],
+    "chancellorsHand": [],
+    "liberalPolicies": 0,
+    "fascistPolicies": 0,
+    "electionTracker": 0,
+    "triggersPowers": {
+        "investigateAt": [],
+        "peakAt": [2],
+        "executeAt": [3,4]
+    },
+    "triggersModifiers": {
+        "vetoEnabledAt": 4,
+        "fascistEndGameAt": 2
+    },
+    "modifiers": {
+        "vetoEnabled": false,
+        "fascistEndGame": false,
+        "temporalPresidency": false
+    },
+    "powers": {
+        "investigate": false,
+        "execute": false,
+        "peak": false,
+        "selectPresident": false
+    },
+    "flags": []
+}
