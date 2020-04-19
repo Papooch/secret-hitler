@@ -1,5 +1,5 @@
 {
-    "phase": "PH_CHOOSE_CHANC",
+    "phase": "PH_ELECT",
     "players": [
         "ondra",
         "marek",
@@ -11,6 +11,12 @@
         "marek": null,
         "verunka": null,
         "hrouda": null
+    },
+    "knownIdentity": {
+        "ondra": [],
+        "marek": [],
+        "verunka": [],
+        "hrouda": []
     },
     "president": 1,
     "temporaryPresident": null,
@@ -27,25 +33,25 @@
     "liberalPolicies": 0,
     "fascistPolicies": 0,
     "electionTracker": 0,
+    "hitlerKnowsFascists": false,
     "triggersPowers": {
-        "investigateAt": [],
-        "peakAt": [2],
-        "executeAt": [3,4]
+        "selectPresidentAt": [1],
+        "investigateAt": [2],
+        "peakAt": [3],
+        "executeAt": [4,5]
+    },
+    "wantsVeto" : {
+        "president": null,
+        "chancellor": null
     },
     "triggersModifiers": {
         "vetoEnabledAt": 4,
-        "fascistEndGameAt": 2
+        "fascistEndGameAt": 3
     },
     "modifiers": {
         "vetoEnabled": false,
         "fascistEndGame": false,
         "temporalPresidency": false
-    },
-    "powers": {
-        "investigate": false,
-        "execute": false,
-        "peak": false,
-        "selectPresident": false
     },
     "flags": []
 }

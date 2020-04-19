@@ -73,6 +73,17 @@ if (isset($_GET['action'])) {
                 $response['payload'] = pass2chancellor($_GET['game'], $_GET['player'], $_GET['discard']);
                 break;
 
+            case 'veto':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                if(!isset($_GET['wants'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = veto($_GET['game'], $_GET['player'], $_GET['wants']);
+                break;
+
             case 'enforce':
                 if(!isset($_GET['game'])){
                     break;
@@ -82,6 +93,17 @@ if (isset($_GET['action'])) {
                 }
                 $response['status'] = "ok";
                 $response['payload'] = enforcePolicy($_GET['game'], $_GET['player'], $_GET['enforce']);
+                break;
+
+            case 'select_pres':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                if(!isset($_GET['id'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = selectPresident($_GET['game'], $_GET['player'], $_GET['id']);
                 break;
             
             default:

@@ -55,30 +55,30 @@ function drawGame(game) {
     $("#content").append("<br>You are: ");
 
     // Roles
-    if(game.flags.isFascist){
+    if(game.thisPlayer.isFascist){
         $("#content").append("Fascist, ");
     }
-    if(game.flags.isHitler){
+    if(game.thisPlayer.isHitler){
         $("#content").append("Hitler, ");
     }
-    if(game.flags.isPresident){
+    if(game.thisPlayer.isPresident){
         $("#content").append("PRESIDENT, ");
     }
-    if(game.flags.isChancellor){
+    if(game.thisPlayer.isChancellor){
         $("#content").append("CHANCELLOR, ");
     }
 
     // Policy board
-    drawPolicies(game.triggersPowers, 0, game['liberalPolicies'], 5);
-    drawPolicies(game.triggersPowers, 1, game['fascistPolicies'], 6);
+    drawPolicies(game.triggers, 0, game.board.liberalPolicies, 5);
+    drawPolicies(game.triggers, 1, game.board.fascistPolicies, 6);
 
     
     // Election tracker
-    drawElectionTracker(game.electionTracker);
+    drawElectionTracker(game.board.electionTracker);
     
     // Draw and discard pile
-    drawPile("draw", game['drawPile'].length);
-    drawPile("discard", game['discardPile'].length);
+    drawPile("draw", game.board.drawPileSize);
+    drawPile("discard", game.board.discardPileSize);
     
     // Players
     $("#content").append("<br>Players:");
@@ -91,16 +91,16 @@ function drawGame(game) {
             // reserved
             break;
 
-        case "PH_CHOOSE_CHANC":
+        case "PH_ELECT":
             setInfoText("President chooses chancellor!");
-            if(game.flags.isPresident){
+            if(game.thisPlayer.isPresident){
                 drawPlayers(game['players'], 'elect');
             }
             break;
 
         case "PH_VOTE":
             setInfoText("Vote for this government");
-            if(!game.flags.hasVoted){
+            if(!game.thisPlayer.hasVoted){
                 drawVoteDialog();
             }
             break;
@@ -112,20 +112,22 @@ function drawGame(game) {
 
         case "PH_PASS":
             setInfoText("President is drawing 3 policies and passes 2 to chancellor");
-            if(game.flags.isPresident){
-                drawPresidentsDialog(game.presidentsHand);
+            if(game.thisPlayer.isPresident){
+                drawPresidentsDialog(game.thisPlayer.hand);
             }
                  
             break;
 
         case "PH_VETO":
-            
-            break;
-
+            setInfoText("Chancellor enforces 1 policy (or may want veto)");
+            if(game.thisPlayer.isPresident || game.thisPlayer.isChancellor){
+                drawVetoDialog();
+            }
+            //no break here
         case "PH_ENFORCE":
             setInfoText("Chancellor enforces 1 policy");
-            if(game.flags.isChancellor){
-                drawChancellorsDialog(game.chancellorsHand);
+            if(game.thisPlayer.isChancellor){
+                drawChancellorsDialog(game.thisPlayer.hand);
             }       
             break;
 
@@ -142,6 +144,10 @@ function drawGame(game) {
             break;
 
         case "PH_SELECT_PRES":
+            setInfoText("President chooses next president!");
+            if(game.thisPlayer.isPresident){
+                drawPlayers(game['players'], 'select_pres');
+            }
             
             break;
 
@@ -165,9 +171,11 @@ function setInfoText(txt) {
 }
 
 function drawPlayers(players, action=null) {
-   players.forEach(
-       (p, i) => $('#content').append(createPlayer(p, i, action))
-   );
+    let i = 0;
+    for (let [name, info] of Object.entries(players)){
+        $('#content').append(createPlayer(name, info, i, action));
+        i++;
+    }
 }
 
 function drawPile(type, count) {
@@ -184,9 +192,10 @@ function drawPolicies(triggers, type, count, total){
     for(let i=0; i<total; i++){
         let txt = "\u00A0";
         if(type==1){
-            if(triggers.investigateAt.includes(i)) txt+= "I";
-            if(triggers.peakAt.includes(i)) txt+= "P";
-            if(triggers.executeAt.includes(i)) txt+= "E";
+            if(triggers.selectPresidentAt.includes(i+1)) txt+= "S";
+            if(triggers.investigateAt.includes(i+1)) txt+= "I";
+            if(triggers.peakAt.includes(i+1)) txt+= "P";
+            if(triggers.executeAt.includes(i+1)) txt+= "E";
         }
         $("#content").append(createPolicy(i>=count?"empty":type, txt));
     }
@@ -202,4 +211,8 @@ function drawChancellorsDialog(cards) {
 
 function drawVoteDialog() {
     $("#content").append(createVoteDialog());
+}
+
+function drawVetoDialog() {
+    $("#content").append(createVetoDialog());
 }

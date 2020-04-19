@@ -19,7 +19,7 @@ function createListEntry(name) {
         .append(button_join);
 }
 
-function createPlayer(name, index, action=null, vote=null) {
+function createPlayer(name, info, index, action=null, vote=null) {
     var el_name = $("<div></div>")
         .css("display","inline-block")
         .addClass("player_name")
@@ -31,6 +31,25 @@ function createPlayer(name, index, action=null, vote=null) {
     
     var button_select = $("<button></button>")
         .addClass("join_game")
+
+    function TFN(value, t, f, n=null){
+        if(value == null){
+            return n
+        }
+        return value ? t : f;
+    }
+    
+    let infotext = "";
+    infotext += TFN(info.isPresident, " [PRESIDENT]", "", "");
+    infotext += TFN(info.isChancellor, " [CHANCELLOR]", "", "");
+    infotext += TFN(info.isDead, " [DEAD]", "", "");
+    infotext += TFN(info.isHitler, " [HITLER]", "", "");
+    infotext += TFN(info.isFascist, " [FASCIST]", " [LIBERAL]", "");
+    infotext += TFN(info.hasVoted, " [VOTED]", "", "");
+    infotext += TFN(info.vote, " [JA!]", "[NEIN!]", "");
+    
+    var player_info = $("<span></span>")
+        .text(infotext);
     
     if(action != null){
         if(action == "elect"){
@@ -38,10 +57,15 @@ function createPlayer(name, index, action=null, vote=null) {
                 .text("Elect as chancellor")
                 .click(()=>AJAXelect(gameid, playername, index));
         }
+        else if(action == "select_pres"){
+            button_select
+                .text("Select as next president")
+                .click(()=>AJAXselectPres(gameid, playername, index));
+        }
         player.append(button_select);
     }
         
-    return player
+    return player.append(player_info);
 }
 
 function createPile(type, count) {
@@ -128,6 +152,22 @@ function createVoteDialog() {
         .addClass("nein_button")
         .text("NEIN!")
         .click(()=>AJAXvote(gameid, playername, 0));    
+    return dialog
+        .append(ja_button)
+        .append(nein_button);
+}
+
+function createVetoDialog() {
+    var dialog = $("<div></div>")
+        .addClass("veto_dialog");
+    var ja_button = $("<button></button>")
+        .addClass("veto_button")
+        .text("I want veto!")
+        .click(()=>AJAXveto(gameid, playername, 1));
+    var nein_button = $("<button></button>")
+        .addClass("no_veto_button")
+        .text("I don't want veto!")
+        .click(()=>AJAXveto(gameid, playername, 0));
     return dialog
         .append(ja_button)
         .append(nein_button);

@@ -42,6 +42,16 @@ function AJAXpass(game, player, discard) {
     return getData({"action":"pass", "game":game, "player":player, "discard":discard});
 }
 
+
+function AJAXveto(game, player, wants) {
+    return getData({"action":"veto", "game":game, "player":player, "wants":wants});
+}
+
 function AJAXenforce(game, player, enforce) {
     return getData({"action":"enforce", "game":game, "player":player, "enforce":enforce});
+}
+
+
+function AJAXselectPres(game, player, id) {
+    return getData({"action":"select_pres", "game":game, "player":player, "id":id});
 }
