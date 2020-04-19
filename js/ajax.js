@@ -6,8 +6,11 @@ function getData(data=null) {
         data: data,
         dataType: "json"
     }).then((r)=>{
-        checkResponse(r)}
-    );
+        checkResponse(r);
+    }).fail((e)=>{
+        console.log(e);
+        drawError(e.responseText);
+    });
 }
 
 function AJAXcreateGame(game) {

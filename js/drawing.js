@@ -11,17 +11,24 @@ function refreshGame() {
 }
 
 function checkResponse(r) {
-    if (r.status = "ok") {
-        try {
-            r.payload.phase;
-            drawGame(r.payload);
-        } catch (e) {
-            drawError("(game) " + r.payload);
-            console.log(e);
-        }
-    } else {
-        drawError("(interface) " + r.payload);
+    if(!r.hasOwnProperty("status")){
+        drawError("(backend) " + r);
+        console.log(r);
+        return;
     }
+
+    if (!r.status == "ok") {
+        drawError("(interface) " + r.payload);
+        console.log(r);
+        return;
+    }
+    
+    if(!r.payload.hasOwnProperty("phase")){
+        drawError("(game) " + r.payload);
+        console.log(r);
+        return;
+    }
+    drawGame(r.payload);
 }
 
 var refresher = setInterval(refreshGame, 2000);
@@ -85,7 +92,7 @@ function drawGame(game) {
             break;
 
         case "PH_CHOOSE_CHANC":
-            setInfoText("Game has started!");
+            setInfoText("President chooses chancellor!");
             if(game.flags.isPresident){
                 drawPlayers(game['players'], 'elect');
             }
@@ -137,6 +144,15 @@ function drawGame(game) {
         case "PH_SELECT_PRES":
             
             break;
+
+        case "PH_FASCISTS_WON":
+            setInfoText("Fascists won!");
+            break;
+
+        case "PH_LIBERALS_WON":
+            setInfoText("Liberals won!");
+            break;
+
 
     }
 

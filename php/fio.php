@@ -4,12 +4,12 @@ require('common.php');
 
 define("SH_GAME_DIR", "./../games/");
 
-function gameHash($game){
+function gameHash(string $game) : string {
     $h = substr(md5($game), 10, 8);
     return $h;
 }
 
-function loadGameFile($game, $player=null) {
+function loadGameFile(string $game) : array {
     $path = SH_GAME_DIR.gameHash($game)."/".$game.".json";
     $game = "";
     if(is_file($path)){
@@ -19,7 +19,7 @@ function loadGameFile($game, $player=null) {
     return false;
 }
 
-function saveGameFile($game, $data) {
+function saveGameFile(string $game, array $data) : void {
     $path = SH_GAME_DIR.gameHash($game)."/".$game.".json";
     $datajson = json_encode($data);
     if(is_file($path)){
@@ -27,7 +27,7 @@ function saveGameFile($game, $data) {
     }
 }
 
-function getGameFileList() {
+function getGameFileList() : array {
     $gamehashes = array_slice(scandir(SH_GAME_DIR),2);
     $games = [];
     foreach ($gamehashes as $hash) {
