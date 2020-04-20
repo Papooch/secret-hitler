@@ -1,3 +1,5 @@
+"use strict";
+
 function drawLobby(list) {
     for(game of list){
         $("#content").append(createListEntry(game));
@@ -8,27 +10,6 @@ function drawLobby(list) {
 
 function refreshGame() {
     AJAXgetGame(gameid, playername);
-}
-
-function checkResponse(r) {
-    if(!r.hasOwnProperty("status")){
-        drawError("(backend) " + r);
-        console.log(r);
-        return;
-    }
-
-    if (!r.status == "ok") {
-        drawError("(interface) " + r.payload);
-        console.log(r);
-        return;
-    }
-    
-    if(!r.payload.hasOwnProperty("phase")){
-        drawError("(game) " + r.payload);
-        console.log(r);
-        return;
-    }
-    drawGame(r.payload);
 }
 
 var refresher = setInterval(refreshGame, 2000);
@@ -132,15 +113,26 @@ function drawGame(game) {
             break;
 
         case "PH_INVESTIGATE":
-            
+            setInfoText("President investigates a player");    
+            if(game.thisPlayer.isPresident){
+                drawPlayers(game['players'], 'investigate');
+            }
             break;
 
         case "PH_PEAK":
-            
+            setInfoText("President looks at top 3 policies");    
+            if(game.thisPlayer.isPresident){
+                if(game.thisPlayer.hand.length > 0){
+                    drawPeakDialog(game.thisPlayer.hand);
+                }
+            }
             break;
 
         case "PH_EXECUTE":
-            
+            setInfoText("President kills a player");    
+            if(game.thisPlayer.isPresident){
+                drawPlayers(game['players'], 'execute');
+            }
             break;
 
         case "PH_SELECT_PRES":
@@ -207,6 +199,10 @@ function drawPresidentsDialog(cards) {
 
 function drawChancellorsDialog(cards) {
     $("#content").append(createChancellorsDialog(cards));
+}
+
+function drawPeakDialog(cards) {
+    $("#content").append(createPeakDialog(cards));
 }
 
 function drawVoteDialog() {

@@ -34,24 +34,25 @@
     "fascistPolicies": 0,
     "electionTracker": 0,
     "hitlerKnowsFascists": false,
+    "wantsVeto" : {
+        "president": null,
+        "chancellor": null
+    },
     "triggersPowers": {
         "selectPresidentAt": [1],
         "investigateAt": [2],
         "peakAt": [3],
         "executeAt": [4,5]
     },
-    "wantsVeto" : {
-        "president": null,
-        "chancellor": null
-    },
     "triggersModifiers": {
         "vetoEnabledAt": 4,
-        "fascistEndGameAt": 3
+        "fascistEndGameAt": 3,
+        "liberalsWinAt": 5,
+        "fascistsWinAt": 6
     },
     "modifiers": {
         "vetoEnabled": false,
         "fascistEndGame": false,
         "temporalPresidency": false
-    },
-    "flags": []
+    }
 }

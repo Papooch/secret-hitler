@@ -1,3 +1,5 @@
+"use strict";
+
 function createListEntry(name) {
     var el_name = $("<div></div>")
         .css("display","inline-block")
@@ -62,6 +64,16 @@ function createPlayer(name, info, index, action=null, vote=null) {
                 .text("Select as next president")
                 .click(()=>AJAXselectPres(gameid, playername, index));
         }
+        else if(action == "execute"){
+            button_select
+                .text("Execute")
+                .click(()=>AJAXexecute(gameid, playername, index));
+        }
+        else if(action == "investigate"){
+            button_select
+                .text("Investigate")
+                .click(()=>AJAXinvestigate(gameid, playername, index));
+        }
         player.append(button_select);
     }
         
@@ -77,7 +89,11 @@ function createPile(type, count) {
             .addClass("draw")
             .text("draw 3")
             .click(()=>AJAXdraw(gameid, playername));
-        pile.append(button_select);
+        var button_peak = $("<button></button>")
+            .addClass("peak")
+            .text("peak at 3")
+            .click(()=>AJAXpeak(gameid, playername));
+        pile.append(button_select).append(button_peak);
     }
     return pile;
 }
@@ -171,4 +187,20 @@ function createVetoDialog() {
     return dialog
         .append(ja_button)
         .append(nein_button);
+}
+
+function createPeakDialog(cards) {
+    var dialog = $("<div></div>")
+        .addClass("peak_dialog");
+    var ok_button = $("<button></button>")
+        .addClass("ok_button")
+        .text("Alright...")
+        .click(()=>AJAXpeakOk(gameid, playername));
+    cards.forEach(
+        (type, i)=>{
+            dialog.append(createPolicy(type));
+        }
+    );
+    return dialog
+        .append(ok_button);
 }

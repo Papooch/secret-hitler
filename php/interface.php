@@ -1,6 +1,6 @@
 <?php
 
-require_once('access.php');
+require_once('public.php');
 
 $response = [
     "status" => "nok",
@@ -105,6 +105,45 @@ if (isset($_GET['action'])) {
                 $response['status'] = "ok";
                 $response['payload'] = selectPresident($_GET['game'], $_GET['player'], $_GET['id']);
                 break;
+            
+            case 'execute':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                if(!isset($_GET['id'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = execute($_GET['game'], $_GET['player'], $_GET['id']);
+                break;
+
+            case 'investigate':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                if(!isset($_GET['id'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = investigate($_GET['game'], $_GET['player'], $_GET['id']);
+                break;
+
+            case 'peak':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = peak($_GET['game'], $_GET['player']);
+                break;
+
+            case 'peak_ok':
+                if(!isset($_GET['player'])){
+                    break;
+                }
+                $response['status'] = "ok";
+                $response['payload'] = peakOk($_GET['game'], $_GET['player']);
+                break;            
+            
             
             default:
                 $response['status'] = "nok";
