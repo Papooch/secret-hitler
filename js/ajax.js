@@ -63,11 +63,19 @@ function AJAXleaveGame(game, player) {
 }
 
 function AJAXcreateGame(game, player) {
+    return getDataList({"action":"delete","game":game, "player":player});
+}
+
+function AJAXcreateGame(game, player) {
     return getDataLobby({"action":"create","game":game, "player":player});
 }
 
 function AJAXjoinGame(game, player) {
     return getDataLobby({"action":"join","game":game, "player":player});
+}
+
+function AJAXready(game, player, ready) {
+    return getDataLobby({"action":"ready","game":game, "player":player, "ready":Number(ready)});
 }
 
 function AJAXkickPlayer(game, player, kick) {
@@ -83,7 +91,7 @@ function AJAXelect(game, player, id) {
 }
 
 function AJAXvote(game, player, vote) {
-    return getDataPlay({"action":"vote", "game":game, "player":player, "vote":vote});
+    return getDataPlay({"action":"vote", "game":game, "player":player, "vote":Number(vote)});
 }
 
 function AJAXdraw(game, player) {
@@ -95,7 +103,7 @@ function AJAXpass(game, player, discard) {
 }
 
 function AJAXveto(game, player, wants) {
-    return getDataPlay({"action":"veto", "game":game, "player":player, "wants":wants});
+    return getDataPlay({"action":"veto", "game":game, "player":player, "wants":Number(wants)});
 }
 
 function AJAXenforce(game, player, enforce) {

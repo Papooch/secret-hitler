@@ -6,6 +6,16 @@ function isGame(string $game) : bool {
     return in_array($game, getGameFileList());
 }
 
+function isGameActive(string $game) : bool {
+    $game = loadGameFile($game);
+    if($game == []) return false;
+    if($game['phase'] == 'PH_FASCISTS_WON' || $game['phase'] == 'PH_LIBERALS_WON'){
+        return false;
+    }
+    # TODO: more checks about age of game
+    return true;
+}
+
 
 function gameHash(string $game) : string {
     $h = substr(md5($game), 10, 8);
@@ -14,6 +24,8 @@ function gameHash(string $game) : string {
 
 function canCreateGame(string $game) : bool {
     if (is_dir(SH_GAME_DIR.gameHash($game))) return false;
+    # allow max games: FIXME:
+    if (count(getGameFileList()) > 5) return false;
     return true;
 }
 
@@ -93,7 +105,7 @@ function getGameFileList() : array {
     return $games;
 }
 
-function clearChatFile(string $game) : array {
+function clearChatFile(string $game) : void {
     $chatStart = '{"messages":[{"time":"","player":"","message":""}';
     file_put_contents(getChatPath($game), $chatStart);
 }
@@ -110,12 +122,33 @@ function createLobby(string $game, string $player) : bool {
     clearChatFile($game);
 
     $lobby['game'] = $game;
-    $lobby['players'] = [$player];
+    $lobby['players'] = [];
     $lobby['creator'] = $player;
 
     saveFile($game, $lobby, "lobby");
     saveFile($game, [], "game");
     return true; 
 }
+
+function deleteGameFiles(string $game) {
+    rrmdir(SH_GAME_DIR.gameHash($game));
+}
+
+
+// remove directory with files
+function rrmdir($dir) {
+    if (is_dir($dir)) { 
+      $objects = scandir($dir);
+      foreach ($objects as $object) { 
+        if ($object != "." && $object != "..") { 
+          if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && !is_link($dir."/".$object))
+            rrmdir($dir. DIRECTORY_SEPARATOR .$object);
+          else
+            unlink($dir. DIRECTORY_SEPARATOR .$object); 
+        } 
+      }
+      rmdir($dir); 
+    } 
+  }
 
 ?>

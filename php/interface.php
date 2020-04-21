@@ -1,20 +1,28 @@
 <?php
 
+// Set $par to $_GET or $_POST
 $par = $_GET;
 
+// Default response
 $response = [
     "status" => "nok",
     "payload" => []
 ];
 
+// (-> someting) is a type of json object that will be returned.
+// Samples of these files are in js/sample_jsons
 $callbackMap = [
     'get_games' => ['getGameFileList'], // -> list
     'create'    => ['createGame', 'game', 'player'], // -> lobby
+    'delete'    => ['deleteGame', 'game', 'player'], // -> list
     'join'      => ['joinGame', 'game', 'player'], // -> lobby
+    'ready'     => ['ready', 'game', 'player', 'ready'], // -> lobby
     'leave'     => ['leaveGame', 'game', 'player'], // -> list
     'kick'      => ['kickPlayer', 'game', 'player', 'kick'], // -> lobby
     'get_lobby' => ['getLobby', 'game'], // -> lobby
+    'start'     => ['startGame', 'game', 'player'], // -> game
     'get_game'  => ['getGame', 'game', 'player'], // -> game
+    'get_game_spectate'  => ['getGame', 'game'], // -> game
     'elect'     => ['selectChancellor', 'game', 'player', 'id'], // -> game
     'draw'      => ['draw3', 'game', 'player'], // -> game
     'vote'      => ['vote', 'game', 'player', 'vote'], // -> game
@@ -29,6 +37,13 @@ $callbackMap = [
     'message'   => ['postMessage', 'game', 'player', 'message'] // -> game #FIXME: do not return game
 ];
 
+/**
+ * Checks if all parameters were supplied with the request
+ * 
+ * @param array[string] $params
+ * @return array[string] string of information about missing parameters
+ * # TODO: only include param names in return
+ */
 function checkMissingParameters(array $params) : array{
     global $par;
     $errors = [];
@@ -40,6 +55,14 @@ function checkMissingParameters(array $params) : array{
     return $errors;
 }
 
+/**
+ * Checks if all params were supplied in the request and calls the
+ * callback function with values of those
+ * 
+ * @param callable $callback the function to be called
+ * @param string[,string[,..]] $param_names variable number of parameter names
+ * @return array the response
+ */
 function getResponse(callable $callback, string ...$param_names) : array {
     global $par;
     $errors = checkMissingParameters($param_names);
@@ -69,5 +92,6 @@ if (isset($par['action'])) {
 }
 
 echo json_encode($response);
+
 
 ?>

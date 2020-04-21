@@ -18,26 +18,31 @@ function getLobby(string $game) : array {
 
 function createGame(string $game, string $player) : array {
     if(!createLobby($game, $player)){
-        return false;
+        return ["cannot create game"];
     }
     return joinGame($game, $player);
 }
 
+function deleteGame(string $game, string $player) : array {
+    if($player != "sudo") return ["you cannot do that!"];
+    deleteGameFiles($game);
+    return getGameFileList();
+}
+
 function joinGame(string $game, string $player) : array {
     $lobby = loadLobbyFile($game);
-    if(in_array($player, $lobby['players'])){
-        return ["player already joined"];
+    if(!in_array($player, array_keys($lobby['players']))){
+        $lobby['players'][$player] = false;
+        saveLobbyFile($game, $lobby);
     }
-    $lobby['players'][$player] = false;
-    saveLobbyFile($game, $lobby);
-    return $lobby;
+    return constructReturnObjectLobby($lobby);
 }
 
 function leaveGame(string $game, string $player) : array {
     $lobby = loadLobbyFile($game);
     unset($lobby['players'][$player]);
     saveLobbyFile($game, $lobby);
-    return $lobby;
+    return getGameFileList();
 }
 
 
@@ -48,18 +53,21 @@ function kickPlayer(string $game, string $player, string $kick) : array {
     // }
     unset($lobby['players'][$kick]);
     saveLobbyFile($game, $lobby);
-    return $lobby;
+    return constructReturnObjectLobby($lobby);
 }
 
 function ready(string $game, string $player, bool $ready) : array {
     $lobby = loadLobbyFile($game);
     $lobby['players'][$player] = $ready;
     saveLobbyFile($game, $lobby);
-    return $lobby;
+    return constructReturnObjectLobby($lobby);
 }
 
-function startGame(string $game) {
-
+function startGame(string $game, string $player) {
+    $lobby = loadLobbyFile($game);
+    $data = createGameData($game, array_keys($lobby['players']));
+    saveGameFile($game, $data);
+    return constructReturnObjectGame($data, $player); 
 }
 
 function postMessage(string $game, string $player, string $message, bool $isGame=true) : array {

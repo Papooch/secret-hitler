@@ -17,6 +17,14 @@ function createListEntry(name) {
         .append(button_join);
 }
 
+function createReadyDialog(ready) {
+    var button_ready = $("<button></button>")
+        .addClass("ready")
+        .text("I am " + (ready ? "NOT " : "") + "ready")
+        .click(()=>AJAXready(gameid, playername, !ready));
+    return button_ready;
+}
+
 function createPlayer(name, info, index, action=null, vote=null) {
     var el_name = $("<div></div>")
         .css("display","inline-block")
@@ -28,7 +36,7 @@ function createPlayer(name, info, index, action=null, vote=null) {
         .append(el_name);
     
     var button_select = $("<button></button>")
-        .addClass("join_game")
+        .addClass("select_player")
 
     function TFN(value, t, f, n=null){
         if(value == null){
@@ -38,13 +46,21 @@ function createPlayer(name, info, index, action=null, vote=null) {
     }
     
     let infotext = "";
-    infotext += TFN(info.isPresident, " [PRESIDENT]", "", "");
-    infotext += TFN(info.isChancellor, " [CHANCELLOR]", "", "");
-    infotext += TFN(info.isDead, " [DEAD]", "", "");
-    infotext += TFN(info.isHitler, " [HITLER]", "", "");
-    infotext += TFN(info.isFascist, " [FASCIST]", " [LIBERAL]", "");
-    infotext += TFN(info.hasVoted, " [VOTED]", "", "");
-    infotext += TFN(info.vote, " [JA!]", "[NEIN!]", "");
+    if(info === true || info === false){
+        infotext += " is " + (info ? "" : "NOT ") + "ready";
+        button_select
+            .text("Kick out")
+            .click(()=>AJAXkickPlayer(gameid, playername, name));
+        player.append(button_select);
+    }else{
+        infotext += TFN(info.isPresident, " [PRESIDENT]", "", "");
+        infotext += TFN(info.isChancellor, " [CHANCELLOR]", "", "");
+        infotext += TFN(info.isDead, " [DEAD]", "", "");
+        infotext += TFN(info.isHitler, " [HITLER]", "", "");
+        infotext += TFN(info.isFascist, " [FASCIST]", " [LIBERAL]", "");
+        infotext += TFN(info.hasVoted, " [VOTED]", "", "");
+        infotext += TFN(info.vote, " [JA!]", "[NEIN!]", "");
+    }
     
     var player_info = $("<span></span>")
         .text(infotext);

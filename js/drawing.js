@@ -1,6 +1,8 @@
 "use strict";
 
 function drawList(list) {
+    console.log(list);
+    $("#content").empty();
     for(let game of list){
         $("#content").append(createListEntry(game));
     }
@@ -16,6 +18,14 @@ function drawList(list) {
         .append(button_new_game);
 }
 
+
+
+function drawLobby(lobby) {
+    console.log(lobby);
+    $("#content").empty();
+    drawPlayers(lobby.players);
+    $("#content").append(createReadyDialog(lobby.players[playername]));
+}
 
 function sendMessage(){
     let input = $("#message-input");
@@ -34,7 +44,6 @@ function drawError(error) {
 }
 
 function drawGame(game) {
-
 
     console.log(game);
     $("#content").empty();
@@ -236,8 +245,4 @@ function drawChat(chat) {
         }
     );
     chat_area.scrollTop(chat_area[0].scrollHeight);
-}
-
-function drawLobby(lobby) {
-    
 }

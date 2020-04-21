@@ -292,6 +292,94 @@ function isChancellorHitler(array $data) : bool {
     return $data['chancellor'] == $data['hitler'];
 }
 
+// ============== CREATING GAME OBJECT ===================== //
+
+function getTriggersForPlayerCount(int $count) : array{
+    // select, investigate, peak, execute
+    $triggersPowers = [];
+    if ($count <= 6) {
+        $triggersPowers['selectPresidentAt'] = [];
+        $triggersPowers['investigateAt'] = [];
+        $triggersPowers['peakAt'] = [3];
+        $triggersPowers['executeAt'] = [4,5];
+    } elseif ($count > 6 && $count <= 8) {
+        $triggersPowers['selectPresidentAt'] = [3];
+        $triggersPowers['investigateAt'] = [2];
+        $triggersPowers['peakAt'] = [];
+        $triggersPowers['executeAt'] = [4,5];
+    } elseif ($count > 8 && $count <= 10) {
+        $triggersPowers['selectPresidentAt'] = [3];
+        $triggersPowers['investigateAt'] = [1,2];
+        $triggersPowers['peakAt'] = [0];
+        $triggersPowers['executeAt'] = [4,5];
+    }
+    return $triggersPowers;
+}
+
+function createGameData(string $game, array $players){
+    foreach ($players as $player) {
+        $voting[$player] = null;
+        $knownIdentity[$player] = [];
+    }
+    
+    $fascistCountPlayerCountMap = [
+        5 => 2,
+        6 => 2,
+        7 => 3,
+        8 => 3,
+        9 => 4,
+        10 => 4
+    ];
+
+    $playerCount = count($players);
+    $fascistCount = $fascistCountPlayerCountMap[$playerCount];
+    $president = array_rand($players);
+    $fascists = array_rand($players, $fascistCount);
+
+    $drawPile = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0]; // 11 fascist, 6 liberal
+    shuffle($drawPile);
+    
+    $ret = [
+        "game" => $game,
+        "phase" => 'PH_ELECT',
+        "players" => $players,
+        "voting" => $voting,
+        "knownIdentity" => $knownIdentity,
+        "president" => $president,
+        "chancellor" => $president,
+        "temporaryPresident" => null,
+        "lastGovernment" => [],
+        "fascists" => $fascists,
+        "hitler" => $fascists[array_rand($fascists)],
+        "confirmedNotHitler" => [],
+        "dead" => [],
+        "drawPile" => $drawPile,
+        "discardPile" => [],
+        "presidentsHand" => [],
+        "chancellorsHand" => [],
+        "liberalPolicies" => 0,
+        "fascistPolicies" => 0,
+        "electionTracker" => 0,
+        "hitlerKnowsFascists" => ($playerCount <= 6) ? true : false,
+        "wantsVeto" => [
+            "president" => null,
+            "chancellor" => null
+        ],
+        "triggersPowers" => getTriggersForPlayerCount($playerCount),
+        "triggersModifiers" => [
+            "vetoEnabledAt" => 4,
+            "fascistEndGameAt" => 3,
+            "liberalsWinAt" => 5,
+            "fascistsWinAt" => 6
+        ],
+        "modifiers" => [
+            "vetoEnabled" => false,
+            "fascistEndGame" => false,
+            "temporalPresidency" => false
+        ]
+    ];
+    return $ret;
+}
 
 // ============== RETURN OBJECT CONSTRUCTION =============== //
 
@@ -382,6 +470,7 @@ function constructReturnObjectLobby(array $lobby) : array {
     $chat = loadChatFile($lobby['game']);
     $ret['chat'] = $chat;
     $ret['chat']['count'] = count($chat['messages']);
+    $ret['gameActive'] = isGameActive($lobby['game']);
     return $ret;
 }
 

@@ -10,7 +10,7 @@ function play() {
             }
         );
     }else{
-        console.log("error");
+        list();
         //data.then((r)=>console.log(r));
         //$("body").text(data);
     }
@@ -36,6 +36,6 @@ function createGame() {
 function joinGame(game) {
     playername = $("#name-input").val();
     if(playername.length == 0) return;
+    gameid = game;
     AJAXjoinGame(game, playername);
-    window.location.href = "play.php?player="+playername+"&game="+game;
 }
