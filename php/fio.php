@@ -2,10 +2,16 @@
 
 define("SH_GAME_DIR", "./../games/");
 
+function isGame(string $game) : bool {
+    return in_array($game, getGameFileList());
+}
+
+
 function gameHash(string $game) : string {
     $h = substr(md5($game), 10, 8);
     return $h;
 }
+
 function canCreateGame(string $game) : bool {
     if (is_dir(SH_GAME_DIR.gameHash($game))) return false;
     return true;
@@ -25,6 +31,10 @@ function getLobbyPath(string $game) : string {
     return SH_GAME_DIR.gameHash($game)."/".$game."_lobby.json";
 }
 
+function getChatPath(string $game) : string {
+    return SH_GAME_DIR.gameHash($game)."/".$game."_chat.json";
+}
+
 function loadFile(string $game, string $type) : array {
     $path = getPath($game, $type);
     $game = "";
@@ -34,6 +44,7 @@ function loadFile(string $game, string $type) : array {
     }
     return [];
 }
+
 
 function saveFile(string $game, array $data, string $type) : void {
     $path = getPath($game, $type);
@@ -51,6 +62,28 @@ function saveGameFile(string $game, array $data) : void {
     saveFile($game, $data, "game");
 }
 
+
+function loadLobbyFile(string $game) : array {
+    return loadFile($game, "lobby");
+}
+
+function saveLobbyFile(string $game, array $data) : void {
+    saveFile($game, $data, "lobby");
+}
+
+function appendChatFile(string $game, string $message) : void {
+    $path = getChatPath($game);
+    $mes = ",".$message;
+    file_put_contents($path, $mes, FILE_APPEND);
+}
+
+function loadChatFile(string $game) : array {
+    $path = getChatPath($game);
+    $chat = file_get_contents($path)."]}";
+    return json_decode($chat, true);
+}
+
+
 function getGameFileList() : array {
     $gamehashes = array_slice(scandir(SH_GAME_DIR),2);
     $games = [];
@@ -60,8 +93,13 @@ function getGameFileList() : array {
     return $games;
 }
 
+function clearChatFile(string $game) : array {
+    $chatStart = '{"messages":[{"time":"","player":"","message":""}';
+    file_put_contents(getChatPath($game), $chatStart);
+}
 
-function createLobby(string $game) : bool {
+
+function createLobby(string $game, string $player) : bool {
     if (!canCreateGame($game)) return false;
 
     mkdir(SH_GAME_DIR.gameHash($game));
@@ -69,15 +107,15 @@ function createLobby(string $game) : bool {
     file_put_contents(getLobbyPath($game), "");
     file_put_contents(getGamePath($game), "");
 
-    $lobby['players'] = [];
+    clearChatFile($game);
+
+    $lobby['game'] = $game;
+    $lobby['players'] = [$player];
+    $lobby['creator'] = $player;
 
     saveFile($game, $lobby, "lobby");
     saveFile($game, [], "game");
     return true; 
-}
-
-function getLobby() : array {
-
 }
 
 ?>

@@ -8,32 +8,78 @@ require('private.php');
 
 // ========== LOBBY ACCESS ========== //
 
+function getLobby(string $game) : array {
+    if(!isGame($game)){
+        return [$game." does not exist"];
+    }
+    $lobby = loadLobbyFile($game);
+    return constructReturnObjectLobby($lobby);
+}
+
 function createGame(string $game, string $player) : array {
     if(!createLobby($game, $player)){
-
+        return false;
     }
-
-
-    return True;
+    return joinGame($game, $player);
 }
 
-function joinGame(string $game, string $player) : bool {
-
+function joinGame(string $game, string $player) : array {
+    $lobby = loadLobbyFile($game);
+    if(in_array($player, $lobby['players'])){
+        return ["player already joined"];
+    }
+    $lobby['players'][$player] = false;
+    saveLobbyFile($game, $lobby);
+    return $lobby;
 }
 
-function leaveGame(string $game, string $player) : bool {
+function leaveGame(string $game, string $player) : array {
+    $lobby = loadLobbyFile($game);
+    unset($lobby['players'][$player]);
+    saveLobbyFile($game, $lobby);
+    return $lobby;
+}
 
+
+function kickPlayer(string $game, string $player, string $kick) : array {
+    $lobby = loadLobbyFile($game);
+    // if($player != $lobby['creator']){ # TODO: uncomment
+    //     return ["You can't kick players"];
+    // }
+    unset($lobby['players'][$kick]);
+    saveLobbyFile($game, $lobby);
+    return $lobby;
+}
+
+function ready(string $game, string $player, bool $ready) : array {
+    $lobby = loadLobbyFile($game);
+    $lobby['players'][$player] = $ready;
+    saveLobbyFile($game, $lobby);
+    return $lobby;
 }
 
 function startGame(string $game) {
 
 }
 
+function postMessage(string $game, string $player, string $message, bool $isGame=true) : array {
+    if(addChatMessage($game, $player, $message)){
+        return $isGame
+                ? getGame($game, $player)
+                : getLobby($game);
+    }else{
+        return ['could not post mesaage'];
+    }
+}
+
 // ========== GAME ACCESS ========== //
 
 function getGame(string $game, $player=null) : array {
+    if(!isGame($game)){
+        return [$game." does not exist"];
+    }
     $data = loadGameFile($game);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 
@@ -56,10 +102,12 @@ function selectChancellor(string $game, string $player, int $id) : array {
     }
     $data['chancellor'] = $id;
 
+    addChatMessageStatus($data,
+       "The president wants to elect ".$data['players'][$id]." as chancellor.");
     setPhase($data, 'PH_VOTE'); //-----> PH_VOTE (everyone votes)
 
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 function vote(string $game, string $player, bool $vote) : array {
@@ -73,6 +121,7 @@ function vote(string $game, string $player, bool $vote) : array {
     $data['voting'][$player] = $vote;
     if(hasEveryoneVoted($data)){
         if(votePassed($data)){
+            addChatMessageStatus($data, "The vote passed!");
             setLastGovernment($data);
             setPhase($data, 'PH_DRAW'); //-----> PH_DRAW (president draws 3)
             if($data['modifiers']['fascistEndGame']){
@@ -83,6 +132,7 @@ function vote(string $game, string $player, bool $vote) : array {
                 }
             } 
         } else {
+            addChatMessageStatus($data, "The vote failed!");
             advanceElectionTrackerAndCheckChaos($data);
             if(!checkWinSituationAndSetPhase($data)){ // next phase is decided by the function
                 resetLastGovernment($data);
@@ -92,7 +142,7 @@ function vote(string $game, string $player, bool $vote) : array {
         }
     }
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 
@@ -120,7 +170,7 @@ function draw3(string $game, string $player) : array {
     setPhase($data, 'PH_PASS'); //-----> PH_PASS (president passes 2 to chancellor)
 
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 function pass2chancellor(string $game, string $player, int $discard) : array {
@@ -151,7 +201,7 @@ function pass2chancellor(string $game, string $player, int $discard) : array {
     }
 
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 function veto(string $game, string $player, bool $wants) : array {
@@ -171,6 +221,7 @@ function veto(string $game, string $player, bool $wants) : array {
     }
     if(bothExpressedVetoOpinion($data)){
         if (bothWantVeto($data)) {
+            addChatMessageStatus($data, "The government has agreed on veto.");
             advanceElectionTrackerAndCheckChaos($data);
             resetLastGovernment($data);
             discardChancellorsHand($data);
@@ -181,7 +232,7 @@ function veto(string $game, string $player, bool $wants) : array {
         }
     }
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 function enforcePolicy(string $game, string $player, int $enforce) : array {
@@ -209,7 +260,7 @@ function enforcePolicy(string $game, string $player, int $enforce) : array {
     }
 
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 function selectPresident(string $game, string $player, int $id) : array {
@@ -231,7 +282,7 @@ function selectPresident(string $game, string $player, int $id) : array {
     $data['temporaryPresident'] = $id;
     setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (chosen president chooses chancellor)
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 
@@ -250,12 +301,15 @@ function investigate(string $game, string $player, int $id) : array {
         return ["cannot investigate a dead player"];
     }
 
+    addChatMessageStatus($data,
+        "The president now knows who ".$data['players'][$id]." is.");
+
     array_push($data['knownIdentity'][$player], $id);
 
     advancePresident($data);
     setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (next president selects chancellor)
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 
@@ -273,18 +327,22 @@ function execute(string $game, string $player, int $id) : array {
     if(isDead($data, $data['players'][$id])){
         return ["what is dead may never die"];
     }
+    
+    addChatMessageStatus($data,
+        "The president has executed ".$data['players'][$id].".");
 
     array_push($data['dead'], $id);
-
     
     if(isHitler($data, $data['players'][$id])){
         setPhase($data, 'PH_LIBERALS_WON'); //-----> PH_FASCISTS_WON (Hitler is killed)
+        addChatMessageStatus($data,
+            "Hitler was killed, Liberals won!");
     }else{
         advancePresident($data);
         setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (next president selects chancellor)
     }
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 
@@ -310,7 +368,7 @@ function peak(string $game, string $player) : array {
     $data['presidentsHand'] = $hand;
     
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player);
+    return constructReturnObjectGame($data, $player);
 }
 
 
@@ -330,7 +388,7 @@ function peakOk(string $game, string $player) : array {
     advancePresident($data);
     setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (next president selects chancellor)
     saveGameFile($game, $data);
-    return constructReturnObject($data, $player); 
+    return constructReturnObjectGame($data, $player); 
 }
 
 ?>

@@ -21,6 +21,22 @@ PH_LIBERALS_WON
 /*= ============= PRIVATE HELPER ============== */
 /* ============================================ */
 
+// ============ CHAT ================ //
+
+function addChatMessage(string $game, string $player, string $message) : bool {
+    # TODO: more input sanitisation
+    $message = str_replace("\"", "'", $message);
+    $mes['time'] = date('Y-m-d, H:i:s');
+    $mes['player'] = $player;
+    $mes['message'] = $message;
+    appendChatFile($game, json_encode($mes));
+    return true;
+}
+
+function addChatMessageStatus(array $data, string $message) : void {
+    addChatMessage($data['game'], "[game]", $message);
+}
+
 // ========== IN PLACE MODIFIERS ========== //
 
 function setPhase(array &$data, string $phase) : void {
@@ -36,6 +52,7 @@ function advancePresident(array &$data) : void {
         }
     } while (isDead($data, $data['players'][$data['president']]));
     $data['modifiers']['temporalPresidency'] = false;
+    addChatMessageStatus($data, 'The next president is '.$data['players'][$data['president']]);
     resetVotes($data);
 }
 
@@ -61,6 +78,7 @@ function resetLastGovernment(array &$data) : void {
 }
 
 function advanceElectionTrackerAndCheckChaos(array &$data) : bool {
+    addChatMessageStatus($data, "Advancing election tracker...");
     $data['electionTracker']++;
     if($data['electionTracker'] > 2){
         resetElectionTracker($data);
@@ -123,6 +141,7 @@ function enactPolicy(array &$data, int $policy) : void {
     } else {
         $data['fascistPolicies']++;
     }
+    addChatMessageStatus($data, ($policy ? "Fascist" : "Liberal")." policy was enacted.");
     resetElectionTracker($data);
     resetVotes($data);
     updateModifiers($data);
@@ -131,6 +150,7 @@ function enactPolicy(array &$data, int $policy) : void {
 
 function revealTopPolicy(array &$data) : void {
     $policy = array_pop($data['drawPile']);
+    addChatMessageStatus($data, "Revealing top policy...");
     enactPolicy($data, $policy);
 }
 
@@ -150,14 +170,26 @@ function shuffleDiscardIntoDraw(array &$data) : void {
     array_push($data['drawPile'], ...$data['discardPile']);
     $data['discardPile'] = [];
     shuffle($data['drawPile']);
+    addChatMessageStatus($data, "Shuffling discard pile back into draw pile...");
 }
 
 // ================== BOOL ================= //
 
-function isGame(string $game) : bool {
-    return True;
+
+// --- LOBBY --- //
+
+function isReady(array $lobby, string $player){
+    return $lobby['players'][$player];
 }
 
+function isEveryoneReady(array $lobby){
+    foreach ($lobby['players'] as $p => $ready) {
+        if(!$ready) return false;
+    }
+    return true;
+}
+
+// --- GAME ---- //
 
 function isPresident(array $data, string $player) : bool {
     $pres = $data['players'][$data['president']];
@@ -284,7 +316,7 @@ function getPlayerRoles(array $data, string $player) : array {
     return $ret;
 }
 
-function constructReturnObject(array $data, string $player) : array {
+function constructReturnObjectGame(array $data, string $player) : array {
     $ret['phase'] = $data['phase'];
 
     if (!isPlayer($data, $player)){
@@ -309,12 +341,17 @@ function constructReturnObject(array $data, string $player) : array {
         if (!$player){
             continue;
         }
+        if($data['phase'] == 'PH_FASCISTS_WON' || $data['phase'] == 'PH_LIBERALS_WON'){
+            $ret['players'][$p]['isFascist'] = isFascist($data, $p);
+            $ret['players'][$p]['isHitler'] = isHitler($data, $p);
+            continue;
+        }
         if(in_array($i, $data['knownIdentity'][$player])){
             $ret['players'][$p]['isFascist'] = isFascist($data, $p);
         }
         if(isFascist($data, $player) && !isHitler($data, $player)){
             $ret['players'][$p]['isFascist'] = isFascist($data, $p);
-            $ret['players'][$p]['isHitler'] = isFascist($data, $p);
+            $ret['players'][$p]['isHitler'] = isHitler($data, $p);
         }
         if(isHitler($data, $player)){
             $ret['players'][$p]['isHitler'] = false;
@@ -334,6 +371,17 @@ function constructReturnObject(array $data, string $player) : array {
     $ret['board'] = $board;
     $ret['modifiers'] = $data['modifiers'];
     $ret['triggers'] = array_merge($data['triggersPowers'], $data['triggersModifiers']);
+    $chat = loadChatFile($data['game']);
+    $ret['chat'] = $chat;
+    $ret['chat']['count'] = count($chat['messages']);
+    return $ret;
+}
+
+function constructReturnObjectLobby(array $lobby) : array {
+    $ret = $lobby;
+    $chat = loadChatFile($lobby['game']);
+    $ret['chat'] = $chat;
+    $ret['chat']['count'] = count($chat['messages']);
     return $ret;
 }
 

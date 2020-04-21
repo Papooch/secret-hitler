@@ -17,12 +17,19 @@
         var $_GET = <?php echo json_encode($_GET); ?>;
     </script>
 </head>
+<script>
+    var gameid = "";
+    var playername = "";
+</script>
 <body id="body">
+    SECRET HITLER <br>
+    Your name:
+    <input type="text" name="" id="name-input">
     <div id="content">
         Loading...
     </div>
 <script>
-    $(document).ready(main())
+    $(document).ready(list())
 </script>
 </body>
 </html>

@@ -9,11 +9,7 @@ function createListEntry(name) {
         .addClass("join_game")
         .text("join")
         .click(()=>{
-            AJAXgetGame(name)
-                .then((r)=>{
-                    drawGame(r['payload']);
-                }
-                );
+            joinGame(name);
             });
     return $("<div></div>")
         .addClass("list_entry")
@@ -203,4 +199,21 @@ function createPeakDialog(cards) {
     );
     return dialog
         .append(ok_button);
+}
+
+function createChatEntry(entry) {
+    let timestamp = $("<span></span>")
+        .addClass("timestamp")
+        .text("(" + entry.time + ") ");
+    let name = $("<span></span>")
+        .addClass("player")
+        .text(entry.player + ": ");
+    let message = $("<span></span>")
+        .addClass("message")
+        .text(entry.message);
+    return $("<div></div>")
+        .addClass("chat-entry")
+        .append(timestamp)
+        .append(name)
+        .append(message);
 }

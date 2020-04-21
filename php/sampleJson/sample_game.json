@@ -1,4 +1,5 @@
 {
+    "game": "sample",
     "phase": "PH_ELECT",
     "players": [
         "ondra",

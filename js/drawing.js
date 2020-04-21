@@ -1,18 +1,32 @@
 "use strict";
 
-function drawLobby(list) {
-    for(game of list){
+function drawList(list) {
+    for(let game of list){
         $("#content").append(createListEntry(game));
     }
-    $("#content").append($("<div></div>").text("ahoj"));
+    var new_game = $("<input type='text'' name='' id='game-input'></input>");
+    var button_new_game = $("<button></button>")
+        .addClass("new_game")
+        .text("+ create new")
+        .click(()=>{
+            createGame();
+            });
+    $("#content")
+        .append(new_game)
+        .append(button_new_game);
 }
 
+
+function sendMessage(){
+    let input = $("#message-input");
+    let message = input.val();
+    input.val("");
+    AJAXmessage(gameid, playername, message);
+}
 
 function refreshGame() {
     AJAXgetGame(gameid, playername);
 }
-
-var refresher = setInterval(refreshGame, 2000);
 
 function drawError(error) {
     $("#content").empty();
@@ -36,17 +50,19 @@ function drawGame(game) {
     $("#content").append("<br>You are: ");
 
     // Roles
-    if(game.thisPlayer.isFascist){
-        $("#content").append("Fascist, ");
-    }
-    if(game.thisPlayer.isHitler){
-        $("#content").append("Hitler, ");
-    }
-    if(game.thisPlayer.isPresident){
-        $("#content").append("PRESIDENT, ");
-    }
-    if(game.thisPlayer.isChancellor){
-        $("#content").append("CHANCELLOR, ");
+    if(game.hasOwnProperty("thisPlayer")){
+        if(game.thisPlayer.isFascist){
+            $("#content").append("Fascist, ");
+        }
+        if(game.thisPlayer.isHitler){
+            $("#content").append("Hitler, ");
+        }
+        if(game.thisPlayer.isPresident){
+            $("#content").append("PRESIDENT, ");
+        }
+        if(game.thisPlayer.isChancellor){
+            $("#content").append("CHANCELLOR, ");
+        }
     }
 
     // Policy board
@@ -66,33 +82,42 @@ function drawGame(game) {
     drawPlayers(game['players']);
     $("#content").append("<br>Available actions:<br>");
 
-    // Dialogs based on game
+    // Info text
+    setInfoText(infotext[game.phase]);
+    
+    if(game.hasOwnProperty("thisPlayer")){
+        drawOptionalDialogs(game);
+    }
+
+    drawChat(game.chat.messages);
+}
+
+
+function drawOptionalDialogs(game) {
+// Dialogs based on game
     switch(game.phase){
         case "PH_START":
             // reserved
             break;
 
         case "PH_ELECT":
-            setInfoText("President chooses chancellor!");
             if(game.thisPlayer.isPresident){
                 drawPlayers(game['players'], 'elect');
             }
             break;
 
         case "PH_VOTE":
-            setInfoText("Vote for this government");
             if(!game.thisPlayer.hasVoted){
                 drawVoteDialog();
             }
             break;
 
         case "PH_DRAW":
-            setInfoText("President is drawing 3 policies and passes 2 to chancellor");
+            setInfoText();
             // TODO: Draw
             break;
 
         case "PH_PASS":
-            setInfoText("President is drawing 3 policies and passes 2 to chancellor");
             if(game.thisPlayer.isPresident){
                 drawPresidentsDialog(game.thisPlayer.hand);
             }
@@ -100,27 +125,23 @@ function drawGame(game) {
             break;
 
         case "PH_VETO":
-            setInfoText("Chancellor enforces 1 policy (or may want veto)");
             if(game.thisPlayer.isPresident || game.thisPlayer.isChancellor){
                 drawVetoDialog();
             }
             //no break here
         case "PH_ENFORCE":
-            setInfoText("Chancellor enforces 1 policy");
             if(game.thisPlayer.isChancellor){
                 drawChancellorsDialog(game.thisPlayer.hand);
             }       
             break;
 
         case "PH_INVESTIGATE":
-            setInfoText("President investigates a player");    
             if(game.thisPlayer.isPresident){
                 drawPlayers(game['players'], 'investigate');
             }
             break;
 
         case "PH_PEAK":
-            setInfoText("President looks at top 3 policies");    
             if(game.thisPlayer.isPresident){
                 if(game.thisPlayer.hand.length > 0){
                     drawPeakDialog(game.thisPlayer.hand);
@@ -129,14 +150,12 @@ function drawGame(game) {
             break;
 
         case "PH_EXECUTE":
-            setInfoText("President kills a player");    
             if(game.thisPlayer.isPresident){
                 drawPlayers(game['players'], 'execute');
             }
             break;
 
         case "PH_SELECT_PRES":
-            setInfoText("President chooses next president!");
             if(game.thisPlayer.isPresident){
                 drawPlayers(game['players'], 'select_pres');
             }
@@ -144,19 +163,12 @@ function drawGame(game) {
             break;
 
         case "PH_FASCISTS_WON":
-            setInfoText("Fascists won!");
             break;
 
         case "PH_LIBERALS_WON":
-            setInfoText("Liberals won!");
             break;
-
-
     }
-
-
 }
-
 
 function setInfoText(txt) {
     $("#info").text(txt);
@@ -211,4 +223,21 @@ function drawVoteDialog() {
 
 function drawVetoDialog() {
     $("#content").append(createVetoDialog());
+}
+
+function drawChat(chat) {
+    let chat_area = $("#chat");
+    chat_area.css("height","100px");
+    chat_area.css("overflow-y","scroll");
+    chat_area.empty();
+    chat.forEach(
+        (entry) => {
+            chat_area.append(createChatEntry(entry));
+        }
+    );
+    chat_area.scrollTop(chat_area[0].scrollHeight);
+}
+
+function drawLobby(lobby) {
+    
 }

@@ -1,14 +1,87 @@
 {
     "status": "ok",
     "payload": {
-        "game": "sample",
-        "players": {
-            "ondra": false,
-            "marek": false,
-            "verunka": false,
-            "hrouda": false
+        "phase": "PH_ELECT",
+        "thisPlayer": {
+            "isDead": false,
+            "isPresident": false,
+            "isChancellor": true,
+            "hasVoted": false,
+            "isHitler": false,
+            "isFascist": false,
+            "vote": null,
+            "hand": []
         },
-        "creator": "ondra",
+        "players": {
+            "ondra": {
+                "isDead": false,
+                "isPresident": false,
+                "isChancellor": true,
+                "hasVoted": false,
+                "isHitler": false,
+                "isFascist": false,
+                "vote": null,
+                "hand": []
+            },
+            "marek": {
+                "isDead": false,
+                "isPresident": false,
+                "isChancellor": false,
+                "hasVoted": false,
+                "isFascist": null,
+                "isHitler": null,
+                "vote": null
+            },
+            "verunka": {
+                "isDead": false,
+                "isPresident": true,
+                "isChancellor": false,
+                "hasVoted": false,
+                "isFascist": null,
+                "isHitler": null,
+                "vote": null
+            },
+            "hrouda": {
+                "isDead": false,
+                "isPresident": false,
+                "isChancellor": false,
+                "hasVoted": false,
+                "isFascist": null,
+                "isHitler": null,
+                "vote": null
+            }
+        },
+        "board": {
+            "liberalPolicies": 0,
+            "fascistPolicies": 2,
+            "electionTracker": 0,
+            "drawPileSize": 7,
+            "discardPileSize": 4
+        },
+        "modifiers": {
+            "vetoEnabled": false,
+            "fascistEndGame": false,
+            "temporalPresidency": false
+        },
+        "triggers": {
+            "selectPresidentAt": [
+                1
+            ],
+            "investigateAt": [
+                2
+            ],
+            "peakAt": [
+                3
+            ],
+            "executeAt": [
+                4,
+                5
+            ],
+            "vetoEnabledAt": 4,
+            "fascistEndGameAt": 3,
+            "liberalsWinAt": 5,
+            "fascistsWinAt": 6
+        },
         "chat": {
             "messages": [
                 {

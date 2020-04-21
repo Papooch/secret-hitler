@@ -1,160 +1,71 @@
 <?php
 
-require_once('public.php');
+$par = $_GET;
 
 $response = [
     "status" => "nok",
     "payload" => []
 ];
 
-if (isset($_GET['action'])) {
-    if($_GET['action'] == 'get_games'){
-        $response['status'] = "ok";
-        $response['payload'] = getGameFileList();
-    }elseif(isset($_GET['game'])){
-        switch ($_GET['action']) {
-            case 'create':
-                if (createGame($_GET['game'])) {
-                    $response['payload'] = "created";
-                }
-                break;
-            
-            case 'get_game':
-                if(!isset($_GET['player'])){
-                    $_GET['player'] = null;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = getGame($_GET['game'], $_GET['player']);
-                break;
-            
-            case 'set_game':
-                $response['status'] = "ok";
-                saveGameFile($_GET['game']);
-                break;
+$callbackMap = [
+    'get_games' => ['getGameFileList'], // -> list
+    'create'    => ['createGame', 'game', 'player'], // -> lobby
+    'join'      => ['joinGame', 'game', 'player'], // -> lobby
+    'leave'     => ['leaveGame', 'game', 'player'], // -> list
+    'kick'      => ['kickPlayer', 'game', 'player', 'kick'], // -> lobby
+    'get_lobby' => ['getLobby', 'game'], // -> lobby
+    'get_game'  => ['getGame', 'game', 'player'], // -> game
+    'elect'     => ['selectChancellor', 'game', 'player', 'id'], // -> game
+    'draw'      => ['draw3', 'game', 'player'], // -> game
+    'vote'      => ['vote', 'game', 'player', 'vote'], // -> game
+    'pass'      => ['pass2chancellor', 'game', 'player', 'discard'], // -> game
+    'veto'      => ['veto', 'game', 'player', 'wants'], // -> game
+    'enforce'   => ['enforcePolicy', 'game', 'player', 'enforce'], // -> game
+    'select_pres' => ['selectPresident', 'game', 'player', 'id'], // -> game
+    'execute'   => ['execute', 'game', 'player', 'id'], // -> game
+    'investigate' => ['investigate', 'game', 'player', 'id'], // -> game
+    'peak'      => ['peak', 'game', 'player'], // -> game
+    'peak_ok'   => ['peakOk', 'game', 'player'], // -> game
+    'message'   => ['postMessage', 'game', 'player', 'message'] // -> game #FIXME: do not return game
+];
 
-            case 'elect':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['id'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = selectChancellor($_GET['game'], $_GET['player'], $_GET['id']);
-                break;
-            
-            case 'draw':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = draw3($_GET['game'], $_GET['player']);
-                break;
-
-            case 'vote':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['vote'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = vote($_GET['game'], $_GET['player'], $_GET['vote']);
-                break;
-
-            case 'pass':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['discard'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = pass2chancellor($_GET['game'], $_GET['player'], $_GET['discard']);
-                break;
-
-            case 'veto':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['wants'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = veto($_GET['game'], $_GET['player'], $_GET['wants']);
-                break;
-
-            case 'enforce':
-                if(!isset($_GET['game'])){
-                    break;
-                }
-                if(!isset($_GET['enforce'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = enforcePolicy($_GET['game'], $_GET['player'], $_GET['enforce']);
-                break;
-
-            case 'select_pres':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['id'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = selectPresident($_GET['game'], $_GET['player'], $_GET['id']);
-                break;
-            
-            case 'execute':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['id'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = execute($_GET['game'], $_GET['player'], $_GET['id']);
-                break;
-
-            case 'investigate':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                if(!isset($_GET['id'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = investigate($_GET['game'], $_GET['player'], $_GET['id']);
-                break;
-
-            case 'peak':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = peak($_GET['game'], $_GET['player']);
-                break;
-
-            case 'peak_ok':
-                if(!isset($_GET['player'])){
-                    break;
-                }
-                $response['status'] = "ok";
-                $response['payload'] = peakOk($_GET['game'], $_GET['player']);
-                break;            
-            
-            
-            default:
-                $response['status'] = "nok";
-                $response['payload'] = "unknown command";
-                break;
+function checkMissingParameters(array $params) : array{
+    global $par;
+    $errors = [];
+    foreach ($params as $param) {
+        if (!isset($par[$param])){
+            $errors[] = "parameter ".$param." is missing.";
         }
+    }
+    return $errors;
+}
+
+function getResponse(callable $callback, string ...$param_names) : array {
+    global $par;
+    $errors = checkMissingParameters($param_names);
+    if (count($errors) > 0){
+        $response['status'] = "nok";
+        $response['payload'] = $errors;
+    } else {
+        $params = [];
+        foreach($param_names as $name){
+            $params[] = $par[$name];
+        }
+        $response['status'] = "ok";
+        $response['payload'] = $callback(...$params);
+    }
+    return $response;
+};
+
+if (isset($par['action'])) {
+    if(array_key_exists($par['action'], $callbackMap)){
+        require_once('public.php');
+        $response = getResponse(...$callbackMap[$par['action']]);
     }else{
-        $response['payload'] = "game not specified";
+        $response['payload'] = "unknown action: ".$par['action'];
     }
 } else {
-    $response['status'] = "nok";
+    $response['payload'] = "action not set";
 }
 
 echo json_encode($response);

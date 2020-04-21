@@ -13,6 +13,7 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/components.js"></script>
     <script type="text/javascript" src="js/drawing.js"></script>
+    <script type="text/javascript" src="js/infotext.js"></script>
 </head>
 <body id="body">
 <script>
@@ -46,9 +47,13 @@ if(empty($issues)){
 ?>
 <div id="info">this is info</div>
 <div id="content"></div>
+<div id="chat"></div>
+Chat:
+<input type="text" name="" id="message-input">
+<button id="send_message" onclick="sendMessage()">Send</button>
 
 <script>
-    $(document).ready(main());
+    $(document).ready(play());
 </script>
 
 </body>
