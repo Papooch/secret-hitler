@@ -70,15 +70,21 @@ function startGame(string $game, string $player) {
     return constructReturnObjectGame($data, $player); 
 }
 
+
+// ========== CHAT ACCESS ============ //
+
 function postMessage(string $game, string $player, string $message, bool $isGame=true) : array {
     if(addChatMessage($game, $player, $message)){
-        return $isGame
-                ? getGame($game, $player)
-                : getLobby($game);
+        return getChat($game);
     }else{
         return ['could not post mesaage'];
     }
 }
+
+function getChat(string $game) : array {
+    return loadChatFile($game);
+}
+
 
 // ========== GAME ACCESS ========== //
 

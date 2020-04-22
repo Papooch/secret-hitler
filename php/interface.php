@@ -22,6 +22,8 @@ $callbackMap = [
     'get_lobby' => ['getLobby', 'game'], // -> lobby
     'start'     => ['startGame', 'game', 'player'], // -> game
     'get_game'  => ['getGame', 'game', 'player'], // -> game
+    'get_chat'  => ['getChat', 'game'], // -> chat
+    'message'   => ['postMessage', 'game', 'player', 'message'], // -> chat
     'get_game_spectate'  => ['getGame', 'game'], // -> game
     'elect'     => ['selectChancellor', 'game', 'player', 'id'], // -> game
     'draw'      => ['draw3', 'game', 'player'], // -> game
@@ -33,8 +35,7 @@ $callbackMap = [
     'execute'   => ['execute', 'game', 'player', 'id'], // -> game
     'investigate' => ['investigate', 'game', 'player', 'id'], // -> game
     'peak'      => ['peak', 'game', 'player'], // -> game
-    'peak_ok'   => ['peakOk', 'game', 'player'], // -> game
-    'message'   => ['postMessage', 'game', 'player', 'message'] // -> game #FIXME: do not return game
+    'peak_ok'   => ['peakOk', 'game', 'player'] // -> game
 ];
 
 /**

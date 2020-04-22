@@ -460,16 +460,14 @@ function constructReturnObjectGame(array $data, string $player) : array {
     $ret['modifiers'] = $data['modifiers'];
     $ret['triggers'] = array_merge($data['triggersPowers'], $data['triggersModifiers']);
     $chat = loadChatFile($data['game']);
-    $ret['chat'] = $chat;
-    $ret['chat']['count'] = count($chat['messages']);
+    $ret['chatMessageCount'] = count($chat['messages']);
     return $ret;
 }
 
 function constructReturnObjectLobby(array $lobby) : array {
     $ret = $lobby;
     $chat = loadChatFile($lobby['game']);
-    $ret['chat'] = $chat;
-    $ret['chat']['count'] = count($chat['messages']);
+    $ret['chatMessageCount'] = count($chat['messages']);
     $ret['gameActive'] = isGameActive($lobby['game']);
     return $ret;
 }

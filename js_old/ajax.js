@@ -32,6 +32,12 @@ function getDataList(data=null){
     });   
 }
 
+function getDataChat(data=null){
+    getData(data).then((r)=>{
+        drawChat(r.payload.messages);
+    });   
+}
+
 
 function checkResponseGame(r) {
     if(!r.hasOwnProperty("status")){
@@ -64,6 +70,14 @@ function AJAXleaveGame(game, player) {
 
 function AJAXcreateGame(game, player) {
     return getDataList({"action":"delete","game":game, "player":player});
+}
+
+function AJAXmessage(game, player, message) {
+    return getDataChat({"action":"message", "game":game, "player":player, "message":message});
+}
+
+function AJAXgetChat(game) {
+    return getDataChat({"action":"get_chat", "game":game});
 }
 
 function AJAXcreateGame(game, player) {
@@ -128,8 +142,4 @@ function AJAXpeak(game, player) {
 
 function AJAXpeakOk(game, player) {
     return getDataPlay({"action":"peak_ok", "game":game, "player":player});
-}
-
-function AJAXmessage(game, player, message) {
-    return getDataPlay({"action":"message", "game":game, "player":player, "message":message});
 }

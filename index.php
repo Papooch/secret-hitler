@@ -9,10 +9,10 @@
     <title>Secret Hitler</title>
     
     <script type="text/javascript" src="../jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="js/ajax.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
-    <script type="text/javascript" src="js/components.js"></script>
-    <script type="text/javascript" src="js/drawing.js"></script>
+    <script type="text/javascript" src="js_old/ajax.js"></script>
+    <script type="text/javascript" src="js_old/main.js"></script>
+    <script type="text/javascript" src="js_old/components.js"></script>
+    <script type="text/javascript" src="js_old/drawing.js"></script>
     <script>
         var $_GET = <?php echo json_encode($_GET); ?>;
     </script>

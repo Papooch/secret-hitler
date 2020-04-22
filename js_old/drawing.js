@@ -98,7 +98,7 @@ function drawGame(game) {
         drawOptionalDialogs(game);
     }
 
-    drawChat(game.chat.messages);
+    AJAXgetChat(gameid);
 }
 
 
