@@ -1,21 +1,21 @@
+"use strict";
 
-class VoteCard extends GameObject {
-    constructor(text) {
-        super();
-        this.text = text
-        this.el.addClass("vote-card " + text).text(text.toUpperCase()+"!");
+class VoteButton extends ButtonObject {
+    constructor(vote, callback) {
+        let text = vote ? "JA!" : "NEIN!";
+        let cssclass = "vote-card " + (vote ? "ja" : "nein");
+        super(text, callback, cssclass);
     }
 }
-
 
 class GovernmentDialog extends DialogObject {
     constructor(hand, isPresident) {
         let policies = [];
-        this.prompt = "Select policy to ENFORCE";
-        this.type = "chancellor";
+        let prompt = "Select policy to ENFORCE";
+        let type = "chancellor";
         if(isPresident){
-            this.prompt = "select policy to DISCARD"
-            this.type = "president";
+            prompt = "select policy to DISCARD"
+            type = "president";
         }
         for (let i = 0; i < hand.length; i++) {
             let policyCard = new PolicyCard(hand[i] ? "fascist" : "liberal");
@@ -26,14 +26,14 @@ class GovernmentDialog extends DialogObject {
             }
             policies.push(policyCard);
         }
-        super(prompt, policies, this.type);
+        super(prompt, policies, type);
     }   
 }
 
 class VoteDialog extends DialogObject {
     constructor(president, chancellor) {
-        let jaCard = new VoteCard("ja").setClickCallback(function(){console.log("voting JA for " + president + " and " + chancellor)});
-        let neinCard = new VoteCard("nein").setClickCallback(function(){console.log("voting NEIN for " + president + " and " + chancellor)});
+        let jaCard = new VoteButton(true, function(){console.log("voting JA for " + president + " and " + chancellor)});
+        let neinCard = new VoteButton(false, function(){console.log("voting NEIN for " + president + " and " + chancellor)});
         super("Vote for " + president + " (as president), and " + chancellor + " (as chancellor).",
         [jaCard, neinCard], 'vote');
     }

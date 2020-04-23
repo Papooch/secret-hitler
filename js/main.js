@@ -28,4 +28,7 @@ function main(){
         game.players = new Players(p.players).appendTo("body");
     });
 
+    let t = setTimeout(()=>{
+        let v = new GovernmentDialog([1,0,1], true).appendTo("body");
+    }, 500);
 }

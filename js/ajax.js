@@ -1,6 +1,5 @@
 "use strict";
 
-
 function getData(data=null) {
     return $.ajax({
         type: "GET",

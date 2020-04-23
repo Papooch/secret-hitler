@@ -1,3 +1,5 @@
+"use strict";
+
 var infotext = {
     PH_START: "",
     PH_ELECT: "President chooses chancellor!",
