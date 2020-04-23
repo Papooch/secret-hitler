@@ -1,3 +1,443 @@
+
+:root {
+    --base-unit: 2vw;
+    --card-width: 8vw;
+    --card-height: 12vw;
+    --color-back: lightgray;
+    --color-draw: wheat;
+    --color-discard: rgb(247, 191, 89);
+    --color-libral: rgb(3, 143, 230);
+    --color-fascist: rgb(243, 41, 41);
+    --color-unknown: rgb(182, 182, 182);
+    --color-ja: rgb(236, 236, 236);
+    --color-nein: black;
+    --color-vote: darkgray;
+}
+
+@media only screen and (min-width: 800px) {
+    :root {
+        --base-unit: 16px;
+        --card-width: 64px;
+        --card-height: 96px;
+    }
+}
+
+
+div {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+
+/* BOARD */
+
+
 body {
     background-color: white;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--color-back);
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: serif;
+}
+
+
+.board {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--color-back);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: calc(20*var(--base-unit));
+    margin-top: calc(2*var(--base-unit));
+    margin-bottom: calc(2*var(--base-unit));
+}
+
+.middle {
+    width: 70%;
+    height: 100%;
+    border: solid gray 2px;
+    background-color: rgb(196, 196, 196);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+}
+
+
+.policy-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 30%;
+}
+
+.policy {
+    margin: 0 calc(0.5*var(--base-unit));
+    border: solid black 1px;
+    width: var(--card-width);
+    height: var(--card-height);
+    border-radius: 3px;
+    box-shadow: black;
+    background-size: 60% 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.policy.trigger-select {
+    background-image: url("../images/svg/icon-hat.svg");
+}
+
+.policy.trigger-investigate {
+    background-image: url("../images/svg/icon-search.svg");
+}
+
+.policy.trigger-execute {
+    background-image: url("../images/svg/icon-cleaver.svg");
+}
+
+
+.policy.empty {
+    border: none;
+    background-color: var(--color-back);
+}
+
+
+.policy-row.liberal .policy:last-child{
+    background-image: url("../images/svg/icon-dove.svg");
+}
+
+.policy-row.fascist .policy:last-child{
+    background-image: url("../images/svg/icon-skull.svg");
+}
+
+.policy.fascist, .policy.liberal {
+    -webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+}
+
+.policy.liberal {
+    background-color: var(--color-libral);
+}
+
+.policy.fascist {
+    background-color: var(--color-fascist);
+}
+
+.election-tracker {
+    height: calc(2*var(--base-unit));
+    width:  30%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.election-tracker::before {
+    content: "";
+    width: 60%;
+    border: none;
+    height: 20%;
+    position: absolute;
+    background-color: var(--color-back);
+}
+
+.tracker-place {
+    border: none;
+    height: calc(1.5*var(--base-unit));
+    width:  calc(1.5*var(--base-unit));
+    border-radius: 50px;
+    background-color: var(--color-back);
+}
+
+.tracker-place.tracker {
+    background-color: black;
+    -webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+}
+
+.pile {
+    display: flex;
+    width: var(--card-width);
+    height: var(--card-height);
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: calc(1.1*var(--base-unit));
+    background-color: var(--color-discard);
+    -webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+}
+
+.pile .pile-size {
+    text-align: center;
+    width: 100%;
+    font-size: calc(2.3*var(--base-unit));
+}
+
+.pile .pile-size:after{
+    content: "DISCARD";
+    font-weight: bold;
+    width: 100%;
+    font-size: calc(0.7*var(--base-unit));
+    position: absolute;
+    bottom: calc(-0.9*var(--base-unit));
+    left: 0;
+    text-align: center;
+}
+
+.pile.draw .pile-size:after{
+    content: "DRAW";
+}
+
+.pile.draw {
+    background-color: var(--color-draw);
+    transition: 0.1s ease-in-out;
+}
+
+/* TODO: Add clickable */
+.pile.draw:hover  {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.pile.draw:before, .pile.draw:after {
+    opacity: 0;
+    border: solid green 2px;
+    content: "";
+    position: absolute;
+    background-color: var(--color-draw);
+    border: solid black 1px;
+    border-radius: 3px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: 0.1s ease-in-out;
+}
+
+.pile.draw:hover:before {
+    opacity: 1;
+    transform: translate(3px, 3px);
+    transition: 0.1s ease-in-out;
+}
+.pile.draw:hover:after {
+    opacity: 1;
+    transform: translate(6px, 6px);
+    transition: 0.1s ease-in-out;
+}
+
+
+/* PLAYERS */
+
+.players {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.player {
+    background-color: var(--color-unknown);
+    border: solid black 1px;
+    border-radius: 3px;
+    width: calc(6*var(--base-unit));
+    height: calc(8*var(--base-unit));
+    min-width: 64px;
+    min-height: 85px;
+    margin: calc(1.2*var(--base-unit));
+    margin-top: calc(3*var(--base-unit));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    transition: 0.1s ease-in-out;
+}
+
+
+.player .player-inner {
+    border-radius: 3px;
+    width: calc(5*var(--base-unit));
+    height: calc(6.7*var(--base-unit));
+    padding-bottom: calc(1.*var(--base-unit));
+    min-width: 53px;
+    min-height: 71px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: rgb(212, 212, 212);
+    background-size: 70% 70%;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-image: url("../images/svg/icon-man-gray.svg");
+}
+
+
+.player .player-name {
+    text-align: center;
+    display: block;
+    /* border: solid red 1px; */
+    margin-top: calc(0.9*var(--base-unit));
+    overflow-wrap: anywhere;
+    word-wrap: break-all;
+    width: 120%;
+    font-size: calc(1*var(--base-unit));
+    transform: rotate(0deg);
+}
+
+.player.liberal {
+    background-color: var(--color-libral);
+}
+
+.player.liberal .player-inner {
+    background-image: url("../images/svg/icon-man-blue.svg");
+}
+
+.player.fascist .player-inner {
+    background-image: url("../images/svg/icon-man-red.svg");
+}
+
+.player.fascist {
+    background-color: var(--color-fascist);
+}
+
+.player.hitler {
+    background-color: rgb(0, 0, 0);;
+}
+
+
+.player.dead {
+    opacity: 0.2;
+    filter: grayscale(0.3);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none
+}
+
+
+/* TODO: Add clickable */
+.player:not(.dead):hover{
+    transform: scale(1.2);
+    cursor: pointer;    
+}
+
+.player:not(.dead):active{
+    transform: scale(1.1);
+}
+
+@media (pointer:coarse) {
+    .player:not(.dead):active{
+        transform: scale(0.9);
+    }
+}
+
+.player::before{
+    text-align: center;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    position: absolute;
+    vertical-align: middle;
+    font-size: calc(1*var(--base-unit));
+    padding: calc(0.2*var(--base-unit)) calc(0.5*var(--base-unit));
+    top: calc(-0.8*var(--base-unit));
+    z-index: 3;
+    -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+}
+
+.player.chancellor::before{
+    content: "CHANCELLOR";
+    background-color: var(--color-discard);
+}
+
+.player.president::before{
+    content: "PRESIDENT";
+    background-color: var(--color-draw);
+}
+
+.player.voted .player-vote{
+    position: absolute;
+    border: none black 3px;
+    background-color: var(--color-vote);
+    color: var(--color-ja);
+    border-radius: 3px;
+    font-size: calc(1*var(--base-unit));
+    width: 70%;
+    text-align: center;
+    font-weight: bold;
+    padding: calc(0.3*var(--base-unit)) 0;
+    bottom: calc(-0.4*var(--base-unit));
+    right: calc(-0.8*var(--base-unit));
+    -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+}
+
+.player.voted .player-vote::before{
+    content: "?";
+}
+
+.player.voted-ja .player-vote::before{
+    content: "JA!";
+}
+
+.player.voted-nein .player-vote::before{
+    content: "NEIN!";
+}
+
+.player.voted-ja .player-vote{
+    background-color: var(--color-ja);
+    color: var(--color-nein);
+}
+
+.player.voted-nein .player-vote{
+    background-color: var(--color-nein);
+    color: var(--color-ja);
+    border-color: var(--color-ja);
+}
+
+
+.player.not-hitler .player-name::after{
+    content: "(not \A hitler)";
+    color: gray;
+    font-size: calc(0.7*var(--base-unit));
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: calc(-0.6*var(--base-unit));
+    text-align: center;
+}
+
+/* clickable object highlight */
+.clickable {
+    -webkit-box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
+    -moz-box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
+    box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
 }

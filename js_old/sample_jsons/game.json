@@ -52,7 +52,7 @@
             }
         },
         "board": {
-            "liberalPolicies": 0,
+            "liberalPolicies": 3,
             "fascistPolicies": 2,
             "electionTracker": 0,
             "drawPileSize": 7,

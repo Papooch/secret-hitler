@@ -155,7 +155,7 @@ function revealTopPolicy(array &$data) : void {
 }
 
 function markChancellorNotHitler(array &$data) : void {
-    $data['confirmedNotHitler'][] = &$data['chancellor'];
+    $data['confirmedNotHitler'][] = $data['chancellor'];
 }
 
 function discardPresidentsHand(array &$data) : void {
@@ -411,6 +411,7 @@ function constructReturnObjectGame(array $data, string $player) : array {
         $player = "";
     } else {
         $ret['thisPlayer'] = getPlayerRoles($data, $player);
+        $ret['thisPlayer']['confirmedNotHitler'] = in_array(array_search($player, $data['players']), $data['confirmedNotHitler']);
         $ret['thisPlayer']['vote'] =  $data['voting'][$player];
         $ret['thisPlayer']['hand'] = isPresident($data, $player)
                                     ? $data['presidentsHand']
@@ -426,6 +427,7 @@ function constructReturnObjectGame(array $data, string $player) : array {
         $ret['players'][$p]['isFascist'] = null;
         $ret['players'][$p]['isHitler'] = null;
         $ret['players'][$p]['vote'] = null;
+        $ret['players'][$p]['confirmedNotHitler'] = in_array($i, $data['confirmedNotHitler']);
         if (!$player){
             continue;
         }

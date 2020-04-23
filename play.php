@@ -11,16 +11,18 @@
     <script type="text/javascript" src="../jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="js/ajax.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
-    <script type="text/javascript" src="js/components.js"></script>
-    <script type="text/javascript" src="js/drawing.js"></script>
-    <script type="text/javascript" src="js/infotext.js"></script>
+    <script type="text/javascript" src="js/components/base.js"></script>
+    <script type="text/javascript" src="js/components/board.js"></script>
+    <script type="text/javascript" src="js/components/players.js"></script>
+    <script type="text/javascript" src="js/components/lobby.js"></script>
+    <script type="text/javascript" src="js/resources/infotext.js"></script>
 </head>
 <body id="body">
 <script>
-var gameid = "";
-var playername = "";
+// var gameid = "";
+// var playername = "";
 </script>
-
+<!-- 
 <?php
 $gameid = "";
 $playername = "";
@@ -40,20 +42,11 @@ if(empty($issues)){
         gameid='",$gameid,"';
         playername='",$playername,"';
     </script>";
-}else{
-    echo "issues: ", $issues;
 }
-
-?>
-<div id="info">this is info</div>
-<div id="content"></div>
-<div id="chat"></div>
-Chat:
-<input type="text" name="" id="message-input">
-<button id="send_message" onclick="sendMessage()">Send</button>
+?> -->
 
 <script>
-    $(document).ready(play());
+    $(document).ready(main());
 </script>
 
 </body>
