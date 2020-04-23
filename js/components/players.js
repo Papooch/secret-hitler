@@ -59,4 +59,10 @@ class Players extends GameObject {
             this.players[name].update(info, callback);
         }
     }
+
+    setClickCallback(callback){
+        for (let [name, info] of Object.entries(this.players)){
+            this.players[name].setClickCallback(callback);
+        }
+    }
 }

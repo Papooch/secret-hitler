@@ -13,6 +13,7 @@
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/components/base.js"></script>
     <script type="text/javascript" src="js/components/board.js"></script>
+    <script type="text/javascript" src="js/components/dialogs.js"></script>
     <script type="text/javascript" src="js/components/players.js"></script>
     <script type="text/javascript" src="js/components/lobby.js"></script>
     <script type="text/javascript" src="js/resources/infotext.js"></script>

@@ -111,7 +111,7 @@ body {
 }
 
 .policy.trigger-execute {
-    background-image: url("../images/svg/icon-cleaver.svg");
+    background-image: url("../images/svg/icon-gun.svg");
 }
 
 
@@ -216,12 +216,12 @@ body {
 }
 
 /* TODO: Add clickable */
-.pile.draw:hover  {
+.pile.clickable.draw:hover  {
     transform: scale(1.2);
     cursor: pointer;
 }
 
-.pile.draw:before, .pile.draw:after {
+.pile.clickable.draw:before, .pile.clickable.draw:after {
     opacity: 0;
     border: solid green 2px;
     content: "";
@@ -236,12 +236,12 @@ body {
     transition: 0.1s ease-in-out;
 }
 
-.pile.draw:hover:before {
+.pile.clickable.draw:hover:before {
     opacity: 1;
     transform: translate(3px, 3px);
     transition: 0.1s ease-in-out;
 }
-.pile.draw:hover:after {
+.pile.clickable.draw:hover:after {
     opacity: 1;
     transform: translate(6px, 6px);
     transition: 0.1s ease-in-out;
@@ -341,17 +341,17 @@ body {
 
 
 /* TODO: Add clickable */
-.player:not(.dead):hover{
+.player.clickable:not(.dead):hover{
     transform: scale(1.2);
     cursor: pointer;    
 }
 
-.player:not(.dead):active{
+.player.clickable:not(.dead):active{
     transform: scale(1.1);
 }
 
 @media (pointer:coarse) {
-    .player:not(.dead):active{
+    .player.clickable:not(.dead):active{
         transform: scale(0.9);
     }
 }
@@ -436,8 +436,8 @@ body {
 }
 
 /* clickable object highlight */
-.clickable {
+/* .clickable {
     -webkit-box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
     -moz-box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
     box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
-}
+}  */

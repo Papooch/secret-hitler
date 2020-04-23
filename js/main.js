@@ -19,7 +19,7 @@ var playername = "verunka";
 var gameid = "sample";
 
 function main(){
-    // #TODO: lobby
+    //#TODO: lobby
     
     AJAXgetGame(gameid, playername)
     .then((r)=>{
