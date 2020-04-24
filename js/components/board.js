@@ -1,6 +1,6 @@
 "use strict";
 
-class PolicyCard extends GameObject {
+class PolicyCard extends BaseObject {
     constructor(type) {
         super();
         this.type = type
@@ -9,15 +9,11 @@ class PolicyCard extends GameObject {
 
     update(type) {
         if (type != this.type) {
-            this.highlight();
+            //this.highlight();
         }
         this.el.removeClass(this.type).addClass(type);
         this.type = type;
         return this;
-    }
-
-    highlight() {
-        // TODO: highlight
     }
 }
 
@@ -31,26 +27,17 @@ class Pile extends PolicyCard {
         this.el.append(this.el_size);
     }
 
-    update(size, callback=null) {
+    update(size) {
         if (size != this.size) {
-            this.highlight();
+            this.highlight("clickable", 200);
         }
         this.size = size;
         this.el_size.text(this.size);
-        if (callback){
-            this.setClickCallback(callback);
-        } else {
-            this.setClickCallback(null);
-        }
         return this;
-    }
-
-    highlight() {
-        //TODO: highlight change
     }
 }
 
-class PolicyRow extends GameObject {
+class PolicyRow extends BaseObject {
     constructor(total, count, type, triggers=null){
         super();
         this.total = total;
@@ -62,8 +49,9 @@ class PolicyRow extends GameObject {
     }
 
     update(count){
+        let flash = false;
         if(count > this.count){
-            // TODO: highlight
+            flash = true;
         }
         this.count = count;
         this.el.empty();
@@ -75,8 +63,10 @@ class PolicyRow extends GameObject {
                 if(this.triggers.investigateAt.includes(i+1)) triggertxt += " trigger-investigate";
                 if(this.triggers.peakAt.includes(i+1)) triggertxt += " trigger-peak";
                 if(this.triggers.executeAt.includes(i+1)) triggertxt += " trigger-execute";
+                if(this.triggers.vetoEnabledAt == (i+1)) triggertxt += " trigger-veto";
                 card.el.addClass(triggertxt);
             }
+            if((i == count-1) && flash){card.highlight("flash", 100)};
             this.el.append(card.el);        
         }
         return this;
@@ -84,7 +74,7 @@ class PolicyRow extends GameObject {
 
 }
 
-class ElectionTracker extends GameObject {
+class ElectionTracker extends BaseObject {
     constructor(position=0) {
         super();
         this.position = position;
@@ -118,7 +108,7 @@ class ElectionTracker extends GameObject {
     }
 }
 
-class Board extends GameObject {
+class Board extends BaseObject {
     constructor(board, modifiers=null, triggers=null){
         super();
         this.board = board;

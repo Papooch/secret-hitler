@@ -24,7 +24,10 @@ function createGame(string $game, string $player) : array {
 }
 
 function deleteGame(string $game, string $player) : array {
-    if($player != "sudo") return ["you cannot do that!"];
+    if($player != "sudo") {
+
+        return ["you cannot do that!"];
+    }
     deleteGameFiles($game);
     return getGameFileList();
 }
@@ -32,6 +35,9 @@ function deleteGame(string $game, string $player) : array {
 function joinGame(string $game, string $player) : array {
     $lobby = loadLobbyFile($game);
     if(!in_array($player, array_keys($lobby['players']))){
+        if(count($lobby['players']) >= 10){
+            return ['There are already 10 players in the lobby.'];
+        }
         $lobby['players'][$player] = false;
         saveLobbyFile($game, $lobby);
     }
@@ -65,6 +71,14 @@ function ready(string $game, string $player, bool $ready) : array {
 
 function startGame(string $game, string $player) {
     $lobby = loadLobbyFile($game);
+    if(count($lobby['players']) < 5) {
+        global $response; $response['status'] = "nok";
+        return ["At least 5 players are needed!"];
+    }
+    if(!isEveryoneReady($lobby)){
+        global $response; $response['status'] = "nok";
+        return ["Some players are not ready!"];
+    }
     $data = createGameData($game, array_keys($lobby['players']));
     saveGameFile($game, $data);
     return constructReturnObjectGame($data, $player); 
@@ -82,6 +96,7 @@ function postMessage(string $game, string $player, string $message, bool $isGame
 }
 
 function getChat(string $game) : array {
+    global $response; $response['status'] = "ok";
     return loadChatFile($game);
 }
 
@@ -291,7 +306,6 @@ function selectPresident(string $game, string $player, int $id) : array {
     if(isDead($data, $data['players'][$id])){
         return ["cannot select a dead player"];
     }
-    resetLastGovernment($data);
     $data['modifiers']['temporalPresidency'] = true;
     $data['temporaryPresident'] = $id;
     setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (chosen president chooses chancellor)

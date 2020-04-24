@@ -1,6 +1,6 @@
 "use strict";
 
-class Player extends GameObject {
+class Player extends BaseObject {
     constructor(name, info, index){
         super();
         this.name = name;
@@ -18,7 +18,7 @@ class Player extends GameObject {
             .append(this.el_vote);
         }
 
-    update(info, callback=null) {
+    update(info) {
         // TODO: compare new and old info
         this.el[0].className = ""; // remove all classes
         let classes = "player";
@@ -31,16 +31,11 @@ class Player extends GameObject {
         classes += TFN(info.vote, " voted-ja", " voted-nein", "");
         classes += TFN(info.confirmedNotHitler, " not-hitler", "", "");
         this.el.addClass(classes);
-        if (callback){
-            this.setClickCallback(callback);
-        } else {
-            this.setClickCallback(null);
-        }
         return this;
     }
 }
 
-class Players extends GameObject {
+class Players extends BaseObject {
     constructor(players) {
         super();
         this.players = [];
@@ -53,16 +48,18 @@ class Players extends GameObject {
         }
     }
 
-    update(players, callback=null){
+    update(players){
         // TODO: some checking
         for (let [name, info] of Object.entries(players)){
-            this.players[name].update(info, callback);
+            this.players[name].update(info);
         }
     }
 
-    setClickCallback(callback){
+    setClickCallback(callback, except=[]){
+        let i = 0;
         for (let [name, info] of Object.entries(this.players)){
-            this.players[name].setClickCallback(callback);
+            this.players[name].setClickCallback(except.includes(i) ? null : callback);
+            i++;
         }
     }
 }

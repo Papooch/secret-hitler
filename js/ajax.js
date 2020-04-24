@@ -17,6 +17,11 @@ function AJAXgetGames() {
     return getData({"action":"get_games"});
 }
 
+
+function AJAXgetLobby(game, player=null) {
+    return getData({"action":"get_lobby", "game":game, "player":player});
+}
+
 function AJAXleaveGame(game, player) {
     return getData({"action":"leave","game":game, "player":player});
 }
@@ -47,6 +52,11 @@ function AJAXready(game, player, ready) {
 
 function AJAXkickPlayer(game, player, kick) {
     return getData({"action":"kick","game":game, "player":player, "kick":kick});
+}
+
+
+function AJAXstartGame(game, player) {
+    return getData({"action":"start", "game":game, "player":player});
 }
 
 function AJAXgetGame(game, player=null) {

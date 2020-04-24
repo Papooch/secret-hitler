@@ -66,16 +66,15 @@ function checkMissingParameters(array $params) : array{
  */
 function getResponse(callable $callback, string ...$param_names) : array {
     global $par;
+    global $response;
     $errors = checkMissingParameters($param_names);
     if (count($errors) > 0){
-        $response['status'] = "nok";
         $response['payload'] = $errors;
     } else {
         $params = [];
         foreach($param_names as $name){
             $params[] = $par[$name];
         }
-        $response['status'] = "ok";
         $response['payload'] = $callback(...$params);
     }
     return $response;

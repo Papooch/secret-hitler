@@ -395,6 +395,8 @@ function getLiberalPlayerRoles(array $data, string $player) : array {
     $ret['isPresident'] = isPresident($data, $player);
     $ret['isChancellor'] = isChancellor($data, $player);
     $ret['hasVoted'] = hasVoted($data, $player);
+    $ret['wasLastGovernment'] = wasLastGovernment($data, array_search($player, $data['players']));
+    $ret['confirmedNotHitler'] = in_array(array_search($player, $data['players']), $data['confirmedNotHitler']);
     return $ret;
 }
 
@@ -411,7 +413,6 @@ function constructReturnObjectGame(array $data, string $player) : array {
         $player = "";
     } else {
         $ret['thisPlayer'] = getPlayerRoles($data, $player);
-        $ret['thisPlayer']['confirmedNotHitler'] = in_array(array_search($player, $data['players']), $data['confirmedNotHitler']);
         $ret['thisPlayer']['vote'] =  $data['voting'][$player];
         $ret['thisPlayer']['hand'] = isPresident($data, $player)
                                     ? $data['presidentsHand']
@@ -427,7 +428,6 @@ function constructReturnObjectGame(array $data, string $player) : array {
         $ret['players'][$p]['isFascist'] = null;
         $ret['players'][$p]['isHitler'] = null;
         $ret['players'][$p]['vote'] = null;
-        $ret['players'][$p]['confirmedNotHitler'] = in_array($i, $data['confirmedNotHitler']);
         if (!$player){
             continue;
         }
@@ -463,6 +463,7 @@ function constructReturnObjectGame(array $data, string $player) : array {
     $ret['triggers'] = array_merge($data['triggersPowers'], $data['triggersModifiers']);
     $chat = loadChatFile($data['game']);
     $ret['chatMessageCount'] = count($chat['messages']);
+    global $response; $response['status'] = "ok";
     return $ret;
 }
 
@@ -471,6 +472,8 @@ function constructReturnObjectLobby(array $lobby) : array {
     $chat = loadChatFile($lobby['game']);
     $ret['chatMessageCount'] = count($chat['messages']);
     $ret['gameActive'] = isGameActive($lobby['game']);
+    $ret['everyoneReady'] = isEveryoneReady($lobby);
+    global $response; $response['status'] = "ok";
     return $ret;
 }
 

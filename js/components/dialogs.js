@@ -11,10 +11,10 @@ class VoteButton extends ButtonObject {
 class GovernmentDialog extends DialogObject {
     constructor(hand, isPresident) {
         let policies = [];
-        let prompt = "Select policy to ENFORCE";
+        let prompt = "Select policy to <span class=enforce>ENFORCE</span>";
         let type = "chancellor";
         if(isPresident){
-            prompt = "select policy to DISCARD"
+            prompt = "select policy to <span class=chancellor>DISCARD</span>"
             type = "president";
         }
         for (let i = 0; i < hand.length; i++) {
@@ -34,7 +34,7 @@ class VoteDialog extends DialogObject {
     constructor(president, chancellor) {
         let jaCard = new VoteButton(true, function(){console.log("voting JA for " + president + " and " + chancellor)});
         let neinCard = new VoteButton(false, function(){console.log("voting NEIN for " + president + " and " + chancellor)});
-        super("Vote for " + president + " (as president), and " + chancellor + " (as chancellor).",
+        super("Vote for <span class=president>" + president + "</span>, and <span class=chancellor>" + chancellor + "</span>.",
         [jaCard, neinCard], 'vote');
     }
 }

@@ -11,6 +11,8 @@
     <script type="text/javascript" src="../jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="js/ajax.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/handlers.js"></script>
     <script type="text/javascript" src="js/components/base.js"></script>
     <script type="text/javascript" src="js/components/board.js"></script>
     <script type="text/javascript" src="js/components/dialogs.js"></script>
@@ -20,33 +22,21 @@
 </head>
 <body id="body">
 <script>
-// var gameid = "";
-// var playername = "";
+var gameid = "sample";
+var playername = "verunka";
 </script>
-<!-- 
+
 <?php
-$gameid = "";
-$playername = "";
-$issues = "";
-if(!isset($_GET['game'])){
-    $issues .= "no game id;";
-}
-if(!isset($_GET['player'])){
-    $issues .= "no player name;";
-}
-if(empty($issues)){
-    $gameid = $_GET['game'];
-    $playername = $_GET['player'];
-    //echo "game: ", $gameid, ", player: ", $playername;
+if(isset($_POST['player'])){
     echo "
     <script>
-        gameid='",$gameid,"';
-        playername='",$playername,"';
+        playername='",$_POST['player'],"';
     </script>";
 }
-?> -->
+?>
 
 <script>
+    playername = playername.toUpperCase();
     $(document).ready(main());
 </script>
 
