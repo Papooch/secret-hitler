@@ -51,9 +51,9 @@ function advancePresident(array &$data) : void {
             $data['president'] = 0;
         }
     } while (isDead($data, $data['players'][$data['president']]));
+    $data['chancellor'] = $data['president'];
     $data['modifiers']['temporalPresidency'] = false;
     addChatMessageStatus($data, 'The next president is '.$data['players'][$data['president']]);
-    resetVotes($data);
 }
 
 function resetVotes(array &$data) : void {
@@ -265,10 +265,13 @@ function wasLastGovernment(array $data, int $id) : bool {
 
 function votePassed(array $data) : bool {
     $ja_count = 0;
+    $vote_count = 0;
     foreach ($data['voting'] as $name => $vote){
+        if(isDead($data, $name)) continue;
+        $vote_count++;
         if($vote == 1) $ja_count++;
     }
-    if($ja_count/count($data['voting']) > 0.5 ){
+    if($ja_count/$vote_count > 0.5 ){
         // vote passed
         return true;
     }
@@ -367,7 +370,7 @@ function createGameData(string $game, array $players){
         ],
         "triggersPowers" => getTriggersForPlayerCount($playerCount),
         "triggersModifiers" => [
-            "vetoEnabledAt" => 4,
+            "vetoEnabledAt" => 5,
             "fascistEndGameAt" => 3,
             "liberalsWinAt" => 5,
             "fascistsWinAt" => 6
@@ -418,6 +421,12 @@ function constructReturnObjectGame(array $data, string $player) : array {
                                     ? $data['presidentsHand']
                                     : $data['chancellorsHand'];
     }
+    $indexes['deadPlayers'] = $data['dead'];
+    $indexes['lastGovernment'] = $data['lastGovernment'];
+    $indexes['thisPlayer'] = array_search($player, $data['players']);
+    $indexes['president'] = $data['president'];
+    $indexes['chancellor'] = $data['chancellor'];
+    $ret['indexes'] = $indexes;
     
     foreach ($data['players'] as $i => $p) {
         if($p == $player){
@@ -428,6 +437,9 @@ function constructReturnObjectGame(array $data, string $player) : array {
         $ret['players'][$p]['isFascist'] = null;
         $ret['players'][$p]['isHitler'] = null;
         $ret['players'][$p]['vote'] = null;
+        if(hasEveryoneVoted($data)){
+            $ret['players'][$p]['vote'] = $data['voting'][$p];
+        }
         if (!$player){
             continue;
         }
@@ -449,9 +461,6 @@ function constructReturnObjectGame(array $data, string $player) : array {
                 $ret['players'][$p]['isFascist'] = isFascist($data, $p);
             }
         }
-        if(hasEveryoneVoted($data)){
-            $ret['players'][$p]['vote'] = $data['voting'][$p];
-        }
     }
     $board['liberalPolicies'] = $data['liberalPolicies'];
     $board['fascistPolicies'] = $data['fascistPolicies'];
@@ -460,7 +469,7 @@ function constructReturnObjectGame(array $data, string $player) : array {
     $board['discardPileSize'] = count($data['discardPile']);
     $ret['board'] = $board;
     $ret['modifiers'] = $data['modifiers'];
-    $ret['triggers'] = array_merge($data['triggersPowers'], $data['triggersModifiers']);
+    $ret['triggers'] = array_merge($data['triggersPowers'], $data['triggersModifiers']);    
     $chat = loadChatFile($data['game']);
     $ret['chatMessageCount'] = count($chat['messages']);
     global $response; $response['status'] = "ok";

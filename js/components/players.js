@@ -10,6 +10,7 @@ class Player extends BaseObject {
         this.el_name = $("<div></div>").addClass("player-name").text(name);
         this.el_inner = $("<div></div>").addClass("player-inner")
             .append(this.el_name);
+        if(name == g_playername){this.el_inner.addClass("player-you")}
         this.el_confirmed = $("<div></div>").addClass("player-confirmed");
         this.el_vote = $("<div></div>").addClass("player-vote");
         this.el
@@ -20,8 +21,8 @@ class Player extends BaseObject {
 
     update(info) {
         // TODO: compare new and old info
-        this.el[0].className = ""; // remove all classes
-        let classes = "player";
+        this.el[0].className = "player " + this.cssCallbackClasses; // remove all classes
+        let classes = "";
         classes += TFN(info.isPresident, " president", "", "");
         classes += TFN(info.isChancellor, " chancellor", "", "");
         classes += TFN(info.isDead, " dead", "", "");

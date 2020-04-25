@@ -1,6 +1,6 @@
 "use strict";
 
-function getData(data=null) {
+function getData(data=null, callback) {
     return $.ajax({
         type: "GET",
         url: "php/interface.php",
@@ -9,100 +9,110 @@ function getData(data=null) {
     }).fail((e)=>{
         console.log(e);
         drawError(e.responseText);
+    }).then((r)=>{
+        validateResponse(r, callback);
     });
 }
 
+function validateResponse(r, callback){
+    console.log(r);
+    if(r.status == "ok"){
+        callback(r);
+    }else{
+        console.log("ERROR: ", r.payload);
+    }
+}
 
-function AJAXgetGames() {
-    return getData({"action":"get_games"});
+function AJAXgetGames(callback) {
+    return getData({"action":"get_games"}, callback);
 }
 
 
-function AJAXgetLobby(game, player=null) {
-    return getData({"action":"get_lobby", "game":game, "player":player});
+function AJAXgetLobby(game, player=null, callback) {
+    return getData({"action":"get_lobby", "game":game, "player":player}, callback);
 }
 
-function AJAXleaveGame(game, player) {
-    return getData({"action":"leave","game":game, "player":player});
+function AJAXleaveGame(game, player, callback) {
+    return getData({"action":"leave","game":game, "player":player}, callback);
 }
 
-function AJAXcreateGame(game, player) {
-    return getData({"action":"delete","game":game, "player":player});
+function AJAXcreateGame(game, player, callback) {
+    return getData({"action":"delete","game":game, "player":player}, callback);
 }
 
-function AJAXmessage(game, player, message) {
-    return getData({"action":"message", "game":game, "player":player, "message":message});
+function AJAXmessage(game, player, message, callback) {
+    return getData({"action":"message", "game":game, "player":player, "message":message}, callback);
 }
 
-function AJAXgetChat(game) {
-    return getData({"action":"get_chat", "game":game});
+function AJAXgetChat(game, callback) {
+    return getData({"action":"get_chat", "game":game}, callback);
 }
 
-function AJAXcreateGame(game, player) {
-    return getData({"action":"create","game":game, "player":player});
+function AJAXcreateGame(game, player, callback) {
+    return getData({"action":"create","game":game, "player":player}, callback);
 }
 
-function AJAXjoinGame(game, player) {
-    return getData({"action":"join","game":game, "player":player});
+function AJAXjoinGame(game, player, callback) {
+    return getData({"action":"join","game":game, "player":player}, callback);
 }
 
-function AJAXready(game, player, ready) {
-    return getData({"action":"ready","game":game, "player":player, "ready":Number(ready)});
+function AJAXready(game, player, ready, callback) {
+    return getData({"action":"ready","game":game, "player":player, "ready":Number(ready)}, callback);
 }
 
-function AJAXkickPlayer(game, player, kick) {
-    return getData({"action":"kick","game":game, "player":player, "kick":kick});
+function AJAXkickPlayer(game, player, kick, callback) {
+    return getData({"action":"kick","game":game, "player":player, "kick":kick}, callback);
 }
 
 
-function AJAXstartGame(game, player) {
-    return getData({"action":"start", "game":game, "player":player});
+function AJAXstartGame(game, player, callback) {
+    return getData({"action":"start", "game":game, "player":player}, callback);
 }
 
-function AJAXgetGame(game, player=null) {
-    return getData({"action":"get_game", "game":game, "player":player});
+function AJAXgetGame(game, player=null, callback) {
+    return getData({"action":"get_game", "game":game, "player":player}, callback);
 }
 
-function AJAXelect(game, player, id) {
-    return getData({"action":"elect", "game":game, "player":player, "id":id});
+function AJAXelect(game, player, id, callback) {
+    return getData({"action":"elect", "game":game, "player":player, "id":id}, callback);
 }
 
-function AJAXvote(game, player, vote) {
-    return getData({"action":"vote", "game":game, "player":player, "vote":Number(vote)});
+function AJAXvote(game, player, vote, callback) {
+    return getData({"action":"vote", "game":game, "player":player, "vote":Number(vote)}, callback);
 }
 
-function AJAXdraw(game, player) {
-    return getData({"action":"draw", "game":game, "player":player});
+function AJAXdraw(game, player, callback) {
+    return getData({"action":"draw", "game":game, "player":player}, callback);
 }
 
-function AJAXpass(game, player, discard) {
-    return getData({"action":"pass", "game":game, "player":player, "discard":discard});
+function AJAXpass(game, player, discard, callback) {
+    return getData({"action":"pass", "game":game, "player":player, "discard":discard}, callback);
 }
 
-function AJAXveto(game, player, wants) {
-    return getData({"action":"veto", "game":game, "player":player, "wants":Number(wants)});
+function AJAXveto(game, player, wants, callback) {
+    return getData({"action":"veto", "game":game, "player":player, "wants":Number(wants)}, callback);
 }
 
-function AJAXenforce(game, player, enforce) {
-    return getData({"action":"enforce", "game":game, "player":player, "enforce":enforce});
+function AJAXenforce(game, player, enforce, callback) {
+    return getData({"action":"enforce", "game":game, "player":player, "enforce":enforce}, callback);
 }
 
-function AJAXselectPres(game, player, id) {
-    return getData({"action":"select_pres", "game":game, "player":player, "id":id});
+function AJAXselectPres(game, player, id, callback) {
+    return getData({"action":"select_pres", "game":game, "player":player, "id":id}, callback);
 }
 
-function AJAXexecute(game, player, id) {
-    return getData({"action":"execute", "game":game, "player":player, "id":id});
+function AJAXexecute(game, player, id, callback) {
+    return getData({"action":"execute", "game":game, "player":player, "id":id}, callback);
 }
 
-function AJAXinvestigate(game, player, id) {
-    return getData({"action":"investigate", "game":game, "player":player, "id":id});
+function AJAXinvestigate(game, player, id, callback) {
+    return getData({"action":"investigate", "game":game, "player":player, "id":id}, callback);
 }
 
-function AJAXpeak(game, player) {
-    return getData({"action":"peak", "game":game, "player":player});
+function AJAXpeak(game, player, callback) {
+    return getData({"action":"peak", "game":game, "player":player}, callback);
 }
 
-function AJAXpeakOk(game, player) {
-    return getData({"action":"peak_ok", "game":game, "player":player});
+function AJAXpeakOk(game, player, callback) {
+    return getData({"action":"peak_ok", "game":game, "player":player}, callback);
 }

@@ -15,12 +15,13 @@ class BaseObject {
         let self = this;
         if (callback) {
             this.el.addClass("clickable " + (cssclass ? cssclass : ""));
-            this.cssCallbackClasses += cssclass + " ";
+            this.cssCallbackClasses += "clickable " + cssclass + " ";
             this.el.off("click");
             this.el.on("click", this.clickCallback.bind(self));
         } else {
-            this.el.removeClass("clickable " + this.cssCallbackClasses);
+            this.el.removeClass(this.cssCallbackClasses);
             this.el.off("click");
+            this.cssCallbackClasses = "";
         }
         return this;
     }
@@ -43,6 +44,10 @@ class ButtonObject extends BaseObject{
         this.el.addClass("button " + cssclass);
         this.el.append(this.el_button_text);
         this.setClickCallback(callback);
+    }
+    setText(text) {
+        this.text = text;
+        this.el_button_text.text(text);
     }
 }
 
@@ -104,13 +109,14 @@ class ListObject extends BaseObject {
         this.el.append(this.el_title);
         this.el.append(this.el_list);
         this.el.append(this.el_buttons);
-        this.items = []
+        this.items = [];
+        this.buttons = [];
         items.forEach(item => {
             this.items.push(item.appendTo(this.el_list));
         });
         if(!bottombuttons) return;
         bottombuttons.forEach(button => {
-                this.el_buttons.append(button.el);
+            this.buttons.push(button.appendTo(this.el_buttons));
         });
     }
     update(items){

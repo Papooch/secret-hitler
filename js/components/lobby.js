@@ -17,17 +17,16 @@ class GamesList extends ListObject {
         var input = new InputObject("", "create new", new ButtonObject("+", null, 'join create'));
         input.button.setClickCallback(()=>{
             let game = input.getValue();
-            AJAXcreateGame(game, playername)
-            .then((r)=>joinGame(game));
+            AJAXcreateGame(game, g_playername, ()=>joinGame(game));
         });
         input.el.addClass("list-item");
         input.el.on('input', restrictInput);
         gamelist.push(input);
         let back_button = new ButtonObject(
             "< Back",
-            function(){window.history.back()},
+            function(){window.location.replace("index.php")},
             "back");
-        super(gamelist, "list-games", "Player: <span class=game>"+playername+"</span>", [back_button]);
+        super(gamelist, "list-games", "Player: <span class=game>"+g_playername+"</span>", [back_button]);
     }
     update(games){
         for (let i = 0; i < this.items.length - 1; i++) {
@@ -44,22 +43,44 @@ class GamesList extends ListObject {
 }
 
 function kickPlayer(name){
-    AJAXkickPlayer(gameid, playername, name)
-        .then((r)=>lobby.players.update(r.payload.players));
+    AJAXkickPlayer(g_gameid, g_playername, name, updateLobby);
 }
 
 function createPlayerInList(name, ready, i, button){
     let item = new ListItem(
-        [(playername != name) ? name : "<span class=myname>" + name + "</span>",
+        [(g_playername != name) ? name : "<span class=myname>" + name + "</span>",
         (ready ? "ready" : "")],
         ["name", (ready ? "ready" : "not-ready")],
         i+1,
-        (playername != name) ? button : null);
+        (g_playername != name) ? button : null);
     return item;
 }
 
+function getPlayButtonCallback(lobby){
+    let AJAXfunc = lobby.gameActive ? AJAXgetGame : AJAXstartGame;
+    return function(){
+        AJAXfunc(g_gameid, g_playername, createGame)}
+}
+
+function getPlayButtonText(lobby){
+    return lobby.gameActive ? "Enter >" : "Start >";
+}
+
+function getPlayButtonClass(lobby){
+    return "start " + ((lobby.everyoneReady || lobby.gameActive ) ? " can-start" : "");
+}
+
+function createPlayButton(lobby){
+    let button = new ButtonObject(
+        getPlayButtonText(lobby),
+        getPlayButtonCallback(lobby),
+        getPlayButtonClass(lobby));
+    return button;
+}
+
 class PlayersList extends ListObject {
-    constructor(players){
+    constructor(lobby){
+        let players = lobby.players;
         let playerlist = [];
         let i = 0;
         for (let [name, ready] of Object.entries(players)){
@@ -70,27 +91,22 @@ class PlayersList extends ListObject {
         let back_button = new ButtonObject(
                         "< Leave",
                         function(){
-                            AJAXleaveGame(gameid, playername)
-                            .then((r)=>{
-                                lobby.players.destroy();
-                                createGameList();
-                            })},
+                            AJAXleaveGame(g_gameid, g_playername,
+                                (r)=>{
+                                g_lobby.players.destroy();
+                                createGameList(r);
+                                })},
                         "back");
         let ready_button = new ButtonObject(
                         "I am ready!",
                         function(){
-                            AJAXready(gameid, playername, true)
-                            .then((r)=>lobby.players.update(r.payload.players))},
+                            AJAXready(g_gameid, g_playername, true, updateLobby)},
                         "ready");
-        let start_button = new ButtonObject(
-                        "Start >",
-                        function(){
-                            AJAXstartGame(gameid, playername)
-                            .then(createGame())},
-                        "create");
-        super(playerlist, "list-players", "Game: <span class=game>"+gameid+"</span>", [back_button, ready_button, start_button]);
+        let start_button = createPlayButton(lobby);
+        super(playerlist, "list-players", "Game: <span class=game>"+g_gameid+"</span>", [back_button, ready_button, start_button]);
     }
-    update(players){
+    update(lobby){
+        let players = lobby.players;
         this.el_list.empty();
         let i = 0;
         for (let [name, ready] of Object.entries(players)){
@@ -100,6 +116,13 @@ class PlayersList extends ListObject {
             this.el_list.append(player.el);
             i++;
         }
+        this.buttons[this.buttons.length - 1]
+            .setClickCallback(
+                getPlayButtonCallback(lobby),
+                getPlayButtonClass(lobby))
+            .setText(
+                getPlayButtonText(lobby)
+            );
         return this;
     }
 }

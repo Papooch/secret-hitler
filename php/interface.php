@@ -12,7 +12,7 @@ $response = [
 // (-> someting) is a type of json object that will be returned.
 // Samples of these files are in js/sample_jsons
 $callbackMap = [
-    'get_games' => ['getGameFileList'], // -> list
+    'get_games' => ['getGames'], // -> list
     'create'    => ['createGame', 'game', 'player'], // -> lobby
     'delete'    => ['deleteGame', 'game', 'player'], // -> list
     'join'      => ['joinGame', 'game', 'player'], // -> lobby

@@ -9,34 +9,35 @@
     <title>Secret Hitler</title>
     
     <script type="text/javascript" src="../jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="js/ajax.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
-    <script type="text/javascript" src="js/common.js"></script>
-    <script type="text/javascript" src="js/handlers.js"></script>
     <script type="text/javascript" src="js/components/base.js"></script>
     <script type="text/javascript" src="js/components/board.js"></script>
     <script type="text/javascript" src="js/components/dialogs.js"></script>
     <script type="text/javascript" src="js/components/players.js"></script>
     <script type="text/javascript" src="js/components/lobby.js"></script>
+    <script type="text/javascript" src="js/components/info.js"></script>
     <script type="text/javascript" src="js/resources/infotext.js"></script>
+    <script type="text/javascript" src="js/ajax.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/handlers.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body id="body">
 <script>
-var gameid = "sample";
-var playername = "verunka";
+var g_gameid = "sample";
+var g_playername = "verunka";
 </script>
 
 <?php
 if(isset($_POST['player'])){
     echo "
     <script>
-        playername='",$_POST['player'],"';
+        g_playername='",$_POST['player'],"';
     </script>";
 }
 ?>
 
 <script>
-    playername = playername.toUpperCase();
+    g_playername = g_playername.toUpperCase();
     $(document).ready(main());
 </script>
 

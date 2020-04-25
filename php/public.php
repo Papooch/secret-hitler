@@ -48,7 +48,7 @@ function leaveGame(string $game, string $player) : array {
     $lobby = loadLobbyFile($game);
     unset($lobby['players'][$player]);
     saveLobbyFile($game, $lobby);
-    return getGameFileList();
+    return getGames();
 }
 
 
@@ -103,6 +103,11 @@ function getChat(string $game) : array {
 
 // ========== GAME ACCESS ========== //
 
+function getGames() : array {
+    global $response; $response['status'] = "ok";
+    return getGameFileList();
+}
+
 function getGame(string $game, $player=null) : array {
     if(!isGame($game)){
         return [$game." does not exist"];
@@ -130,7 +135,7 @@ function selectChancellor(string $game, string $player, int $id) : array {
         return ["selected player was in last government"];
     }
     $data['chancellor'] = $id;
-
+    resetVotes($data);
     addChatMessageStatus($data,
        "The president wants to elect ".$data['players'][$id]." as chancellor.");
     setPhase($data, 'PH_VOTE'); //-----> PH_VOTE (everyone votes)

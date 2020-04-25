@@ -20,9 +20,9 @@ class GovernmentDialog extends DialogObject {
         for (let i = 0; i < hand.length; i++) {
             let policyCard = new PolicyCard(hand[i] ? "fascist" : "liberal");
             if(isPresident){
-                policyCard.setClickCallback(function(){console.log(playername, "discarding", i, "(", this.type, ")")});
+                policyCard.setClickCallback(function(){AJAXpass(g_gameid, g_playername, i, updateGame)});
             }else{
-                policyCard.setClickCallback(function(){console.log(playername, "enforcing", i, "(", this.type, ")")});
+                policyCard.setClickCallback(function(){AJAXenforce(g_gameid, g_playername, i, updateGame)});
             }
             policies.push(policyCard);
         }
@@ -32,8 +32,8 @@ class GovernmentDialog extends DialogObject {
 
 class VoteDialog extends DialogObject {
     constructor(president, chancellor) {
-        let jaCard = new VoteButton(true, function(){console.log("voting JA for " + president + " and " + chancellor)});
-        let neinCard = new VoteButton(false, function(){console.log("voting NEIN for " + president + " and " + chancellor)});
+        let jaCard = new VoteButton(true, function(){AJAXvote(g_gameid, g_playername, true, updateGame)});
+        let neinCard = new VoteButton(false, function(){AJAXvote(g_gameid, g_playername, false, updateGame)});
         super("Vote for <span class=president>" + president + "</span>, and <span class=chancellor>" + chancellor + "</span>.",
         [jaCard, neinCard], 'vote');
     }

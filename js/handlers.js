@@ -2,52 +2,49 @@
 
 var refresher = ()=>{};
 
-function updateGameList(){
-    console.log("updating");
-    AJAXgetGames()
-    .then((r)=>{
-        console.log(r.payload);
-        lobby.games.update(r.payload);
-    });
-}
-
-function handleErrors(r){
-    if(r.status == "ok"){
-        return;
-    }
+function updateGameList(r){
+    console.log(r);
     console.log(r.payload);
+    g_lobby.games.update(r.payload);
 }
 
-function createGameList(){
-    AJAXgetGames()
-    .then((r)=>{
-        clearInterval(refresher);
-        lobby.games = new GamesList(r.payload).appendTo("body");
-        refresher = setInterval(updateGameList, 3000);
-    });
+function createGameList(r){
+    clearInterval(refresher);
+    g_lobby.games = new GamesList(r.payload).appendTo("body");
+    refresher = setInterval(()=>AJAXgetGames(updateGameList), 3000);
 }
 
-function updateLobby(){
-    AJAXgetLobby(gameid, playername)
-    .then((r)=>{
-        handleErrors(r);
-        if(Object.keys(r.payload.players).includes(playername)){
-            lobby.players.update(r.payload.players);
-        }else{
-            lobby.players.destroy();
-            createGameList();
-        }
-    });
+function updateLobby(r){
+    console.log("updating lobby", r);
+    if(Object.keys(r.payload.players).includes(g_playername)){
+        g_lobby.players.update(r.payload);
+    }else{
+        g_lobby.players.destroy();
+        createGameList();
+    }
 }
 
 function joinGame(game){
-    gameid = game;
-    AJAXjoinGame(game, playername)
-    .then((r)=>{
-        handleErrors(r);
-        lobby.games.destroy();
+    g_gameid = game;
+    AJAXjoinGame(game, g_playername, (r)=>{
+        g_lobby.games.destroy();
         clearInterval(refresher);
-        lobby.players = new PlayersList(r.payload.players).appendTo("body");
-        refresher = setInterval(updateLobby, 2000);
+        g_lobby.players = new PlayersList(r.payload).appendTo("body");
+        refresher = setInterval(()=>AJAXgetLobby(g_gameid, g_playername, updateLobby), 2000);
     });
+}
+
+function updateGame(r){
+    g_game.update(r.payload);
+}
+
+function createGame(r){
+    g_lobby.players.destroy();
+    clearInterval(refresher);
+    g_game = new GameObject(r.payload);
+    refresher = setInterval(()=>AJAXgetGame(g_gameid, g_playername, updateGame), 2000);
+}
+
+function createGovernmentDialog(r, isPresident){
+    let dialog = new GovernmentDialog(r.payload.thisPlayer.hand, isPresident).appendTo("body");
 }
