@@ -55,12 +55,20 @@ body {
 }
 
 
+body.fascists-won {
+    background-color: var(--color-fascist);
+}
+
+body.liberals-won {
+    background-color: var(--color-liberal);
+}
+
+
 .board {
     width: 100%;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    background-color: var(--color-back);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -73,6 +81,7 @@ body {
     height: 100%;
     border: solid gray 2px;
     background-color: var(--color-middle);
+    /* background-color: var(--color-liberal); */
     border-radius: 5px;
     display: flex;
     flex-direction: column;
@@ -81,6 +90,14 @@ body {
     -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
     box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+}
+
+.middle.fascists-won {
+    background-color: var(--color-fascist);
+}
+
+.middle.liberals-won {
+    background-color: var(--color-liberal);
 }
 
 
@@ -540,12 +557,16 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-bottom: calc(1.4*var(--base-unit));
+    padding: calc(1.4*var(--base-unit)) 0;
     font-size: calc(1.4*var(--base-unit));
-
+    
     -webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
     box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.75);
+}
+
+.dialog.error {
+    background-color: var(--color-fascist);
 }
 
 .dialog-wrapper.opening .dialog, .dialog-wrapper.closing .dialog{
@@ -573,6 +594,11 @@ body {
     background-color: var(--color-discard);
 }
 
+.dialog-prompt span.highlight {
+    background-color: var(--color-nein);
+    color: var(--color-ja);
+}
+
 
 .dialog-prompt span.enforce{
     background-color: var(--color-ja);
@@ -585,7 +611,7 @@ body {
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
-    margin-top: calc(-3*var(--base-unit));
+    margin-top: calc(-4.5*var(--base-unit));
     margin-bottom: calc(1.4*var(--base-unit));
 }
 
@@ -610,11 +636,20 @@ body {
     background-image: url("../images/svg/icon-hammer.svg");
 }
 
+.dialog-buttons {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
 .button{
     border-radius: 3px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background-color: var(--color-back);
     text-align: center;
     vertical-align: center;
     padding: calc(0.2*var(--base-unit)) calc(0.5*var(--base-unit));
@@ -631,7 +666,23 @@ body {
     transition: 0.1s ease-in-out;
 }
 
-.vote-card.ja{
+.dialog-buttons .vote-card {
+    margin-top: calc(1*var(--base-unit));
+    height: calc(1.5*var(--card-width));
+    width: calc(1.5*var(--card-height));
+    border-radius: 3px;
+    transition: 0.1s ease-in-out;
+}
+
+.button.error,
+.button.confirm {
+    margin-top: calc(1*var(--base-unit));
+    height: calc(0.8*var(--card-width));
+}
+
+
+.vote-card.ja, 
+.button.confirm{
     background-color: var(--color-ja);
     color: var(--color-nein);
 }

@@ -20,6 +20,8 @@ function validateResponse(r, callback){
         callback(r);
     }else{
         console.log("ERROR: ", r.payload);
+        g_errordialog = new ErrorDialog(r.payload).appendTo("body");
+        clearInterval(refresher);
     }
 }
 

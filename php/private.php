@@ -436,6 +436,14 @@ function constructReturnObjectGame(array $data, string $player) : array {
         $ret['players'][$p] = getLiberalPlayerRoles($data, $p);
         $ret['players'][$p]['isFascist'] = null;
         $ret['players'][$p]['isHitler'] = null;
+        $ret['players'][$p]['handSize'] = 0;
+        if($ret['players'][$p]['isPresident']){
+            $ret['players'][$p]['handSize'] = count($data['presidentsHand']);
+        }
+        if($ret['players'][$p]['isChancellor']){
+            $ret['players'][$p]['handSize'] = count($data['chancellorsHand']);
+        }
+
         $ret['players'][$p]['vote'] = null;
         if(hasEveryoneVoted($data)){
             $ret['players'][$p]['vote'] = $data['voting'][$p];

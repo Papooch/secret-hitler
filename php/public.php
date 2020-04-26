@@ -313,6 +313,7 @@ function selectPresident(string $game, string $player, int $id) : array {
     }
     $data['modifiers']['temporalPresidency'] = true;
     $data['temporaryPresident'] = $id;
+    $data['chancellor'] = $id;
     setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (chosen president chooses chancellor)
     saveGameFile($game, $data);
     return constructReturnObjectGame($data, $player);

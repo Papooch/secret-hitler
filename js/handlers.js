@@ -9,6 +9,7 @@ function updateGameList(r){
 }
 
 function createGameList(r){
+    $("body")[0].className = "";
     clearInterval(refresher);
     g_lobby.games = new GamesList(r.payload).appendTo("body");
     refresher = setInterval(()=>AJAXgetGames(updateGameList), 3000);
@@ -25,6 +26,7 @@ function updateLobby(r){
 }
 
 function joinGame(game){
+    $("body")[0].className = "";
     g_gameid = game;
     AJAXjoinGame(game, g_playername, (r)=>{
         g_lobby.games.destroy();
@@ -39,6 +41,7 @@ function updateGame(r){
 }
 
 function createGame(r){
+    $("body")[0].className = "";
     g_lobby.players.destroy();
     clearInterval(refresher);
     g_game = new GameObject(r.payload);
@@ -46,5 +49,5 @@ function createGame(r){
 }
 
 function createGovernmentDialog(r, isPresident){
-    let dialog = new GovernmentDialog(r.payload.thisPlayer.hand, isPresident).appendTo("body");
+    return new GovernmentDialog(r.payload.thisPlayer.hand, isPresident).appendTo("body");
 }

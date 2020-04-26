@@ -6,17 +6,17 @@ class Player extends BaseObject {
         this.name = name;
         this.index = index;
         this.info = info;
-        this.update(this.info);
         this.el_name = $("<div></div>").addClass("player-name").text(name);
         this.el_inner = $("<div></div>").addClass("player-inner")
             .append(this.el_name);
         if(name == g_playername){this.el_inner.addClass("player-you")}
-        this.el_confirmed = $("<div></div>").addClass("player-confirmed");
+        this.el_hand = $("<div></div>").addClass("player-hand");
         this.el_vote = $("<div></div>").addClass("player-vote");
         this.el
             .append(this.el_inner)
-            .append(this.el_confirmed)
+            .append(this.el_hand)
             .append(this.el_vote);
+        this.update(this.info);
         }
 
     update(info) {
@@ -32,6 +32,8 @@ class Player extends BaseObject {
         classes += TFN(info.vote, " voted-ja", " voted-nein", "");
         classes += TFN(info.confirmedNotHitler, " not-hitler", "", "");
         this.el.addClass(classes);
+        this.el_hand[0].className = "player-hand";
+        if(info.handSize) this.el_hand.addClass("size size-" + String(info.handSize));
         return this;
     }
 }

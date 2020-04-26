@@ -29,9 +29,11 @@ class BaseObject {
     highlight(classname, duration){
         this.el.addClass(classname);
         setTimeout(()=>this.el.removeClass(classname), duration);
+        return this;
     }
     destroy(timeout=0){
-        setTimeout(()=>this.el.remove(), timeout)
+        setTimeout(()=>this.el.remove(), timeout);
+        return this;
     }
 }
 
@@ -48,34 +50,48 @@ class ButtonObject extends BaseObject{
     setText(text) {
         this.text = text;
         this.el_button_text.text(text);
+        return this;
     }
 }
 
 
 class DialogObject extends BaseObject{
-    constructor(prompt, items, name){
+    constructor(prompt, items, name, buttons=null){
         super();
         this.prompt = prompt;
         this.items = [];
+        this.buttons = [];
         this.name = name;
         this.el.addClass("dialog-wrapper opening ");
         this.el_dialog = $("<div></div>").addClass("dialog " + name);
         setTimeout(()=>this.el.removeClass("opening"), 300);
         // this.inner = $("<div></div>").addClass("dialog");
         this.el_prompt = $("<div></div>").addClass("dialog-prompt").html(prompt);
-        this.el_items = $("<div></div>").addClass("dialog-items");
-        this.el_dialog.append(this.el_items);
+        if(items && items.length > 0){
+            this.el_items = $("<div></div>").addClass("dialog-items");
+            this.el_dialog.append(this.el_items);
+            items.forEach(item => {
+                item.el.on("click", ()=>this.close());
+                this.items.push(item.appendTo(this.el_items));
+            });
+        }
         this.el_dialog.append(this.el_prompt);
+        if(buttons && buttons.length > 0){;
+            this.el_buttons = $("<div></div>").addClass("dialog-buttons");
+            this.el_dialog.append(this.el_buttons);
+            buttons.forEach(button => {
+                button.el.on("click", ()=>this.close());
+                this.buttons.push(button.appendTo(this.el_buttons));
+            });
+        }
         this.el.append(this.el_dialog);
-        if(!items) return;
-        items.forEach(item => {
-            item.el.on("click", ()=>this.close());
-            this.items.push(item.appendTo(this.el_items));
-        });
     }
-    close(){
-        this.el.addClass("closing");
-        setTimeout(()=>this.el.remove(), 1000);
+    close(timeout=0, callback=null){
+        setTimeout(()=>{
+            if(callback) callback();
+            this.el.addClass("closing");
+            setTimeout(()=>this.el.remove(), 1000);
+        }, timeout);
     }
 }
 

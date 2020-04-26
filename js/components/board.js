@@ -96,10 +96,10 @@ class ElectionTracker extends BaseObject {
         let i=0;
         this.places.forEach(
             place => {
-                if(i>=position){
-                    place.removeClass("tracker");
-                }else{
+                if(i==position){
                     place.addClass("tracker");
+                }else{
+                    place.removeClass("tracker");
                 }
                 i++;
             }
