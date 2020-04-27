@@ -14,6 +14,7 @@
     <script type="text/javascript" src="js/components/dialogs.js"></script>
     <script type="text/javascript" src="js/components/players.js"></script>
     <script type="text/javascript" src="js/components/lobby.js"></script>
+    <script type="text/javascript" src="js/components/chat.js"></script>
     <script type="text/javascript" src="js/components/info.js"></script>
     <script type="text/javascript" src="js/resources/infotext.js"></script>
     <script type="text/javascript" src="js/ajax.js"></script>
@@ -24,7 +25,7 @@
 <body id="body">
 <script>
 var g_gameid = "sample";
-var g_playername = "verunka";
+var g_playername = "ondra";
 </script>
 
 <?php

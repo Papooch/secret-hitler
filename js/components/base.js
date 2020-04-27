@@ -10,6 +10,10 @@ class BaseObject {
         $(domElement).append(this.el);
         return this;
     }
+    prependTo(domElement){
+        $(domElement).prepend(this.el);
+        return this;
+    }
     setClickCallback(callback, cssclass=null){
         this.clickCallback = callback;
         let self = this;

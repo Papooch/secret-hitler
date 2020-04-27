@@ -15,11 +15,11 @@
     --color-middle: rgb(196, 196, 196);
 }
 
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 700px) {
     :root {
-        --base-unit: 16px;
-        --card-width: 64px;
-        --card-height: 96px;
+        --base-unit: 13px;
+        --card-width: 60px;
+        --card-height: 90px;
     }
 }
 
@@ -41,7 +41,7 @@ body {
     background-color: white;
     padding: 0;
     margin: 0;
-    height: 100%;
+    height: 100vh;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -52,6 +52,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-y: auto;
+    transition: 0.2s ease-in-out;
 }
 
 
@@ -66,7 +68,7 @@ body.liberals-won {
 
 .board {
     width: 100%;
-    max-width: 800px;
+    max-width: 750px;
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -546,7 +548,7 @@ body.liberals-won {
 .dialog {
     position: fixed;
     width: 60%;
-    max-width: 800px;
+    max-width: 750px;
     background-color: var(--color-back);
     border: solid black 1px;
     border-radius: 5px;
@@ -579,6 +581,7 @@ body.liberals-won {
 
 .dialog-prompt{
     text-align: center;
+    padding: calc(0.6*var(--base-unit));
 }
 
 .dialog-prompt span{
@@ -730,6 +733,7 @@ body.liberals-won {
 
 .list {
     font-size: calc(1.5*var(--base-unit));
+    flex: 0 1 auto;
     display: flex;
     flex-direction: column;
     border-radius: 5px;
@@ -761,7 +765,7 @@ body.liberals-won {
     border-radius: 5px;
 }
 
-.list-item, .list-items .input {
+.list-item, .list-items .input, .chat .input {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -778,6 +782,7 @@ body.liberals-won {
     background-color: var(--color-ja);
     width: 95%;
     padding-left: calc(2.7*var(--base-unit));
+    padding-right: calc(8*var(--base-unit));
     font-size: calc(1.5*var(--base-unit));
     font-family: serif;
     font-weight: bold;
@@ -790,7 +795,7 @@ body.liberals-won {
     margin: 0 calc(1*var(--base-unit));
 }
 
-.list-item .button {
+.list-item .button, .chat .input .button {
     position: absolute;
     height: 95%;
     width: 15%;
@@ -842,7 +847,8 @@ body.liberals-won {
     background-color: var(--color-liberal);
 }
 
-.button.start {
+.button.start,
+.button.send {
     background-color: var(--color-ja);
     color: black;
 }
@@ -861,6 +867,7 @@ body.liberals-won {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    min-height: calc(2.5*var(--base-unit));
     align-items: center;
     background-color: var(--color-middle);
     height: calc(3*var(--base-unit));
@@ -899,4 +906,138 @@ body.liberals-won {
 .info-text .highlight {
     background-color: var(--color-nein);
     color: var(--color-ja);
+}
+
+/* CHAT */
+
+.chat {
+    font-size: calc(1*var(--base-unit));
+    flex: 1 1 auto;
+    width: 80%;
+    max-width: 600px;
+    min-height: calc(3.5*var(--card-width));
+    border-radius: 5px;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: calc(.5*var(--card-width)) 0;
+    padding: calc(.2*var(--card-width));
+    background-color: var(--color-middle);
+    -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+}
+
+.chat .messages {
+    height: 100%;
+    overflow-y: scroll;
+    padding: 0 3%;
+    transition: 0.2s ease-in-out;
+}
+
+.messages .message {
+    display: grid;
+    column-gap: 1%;
+    grid-template:
+        'player text'
+        'time text';
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin: calc(0.5*var(--base-unit)) calc(0.2*var(--base-unit));
+}
+
+.message.highlight .message-text{
+    -webkit-box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
+    -moz-box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
+    box-shadow: 0px 2px 30px 10px rgba(255,214,8,0.75);
+}
+
+.messages .message.this-player{
+    grid-template:
+        'text player'
+        'text time';
+    justify-content: end;
+}
+
+.message-time,
+.message-player {
+    text-align: center;
+    font-size: 80%;
+}
+
+.message-time {
+    grid-area: time;
+    align-self: start;
+    color: gray;
+}
+.message-player{
+    grid-area: player;
+    align-self: end
+}
+.message-player .system{
+    color: gray;
+}
+
+.message-text{
+    grid-area: text;
+    border-radius: 3px;
+    background-color: var(--color-back);
+    padding: calc(0.5*var(--base-unit)) calc(0.5*var(--base-unit));
+    transition: 0.2s ease-in-out;
+}
+
+.message-text span{
+    padding: calc(0.1*var(--base-unit)) calc(0.3*var(--base-unit));
+    border-radius: 3px;
+}
+.message-text span.fascist {   
+    background-color: var(--color-fascist);
+}
+.message-text span.liberal {
+    background-color: var(--color-liberal);
+
+}
+.message-text span.passed {
+    background-color: var(--color-ja);
+}
+.message-text span.failed {
+    background-color: var(--color-nein);
+    color: var(--color-ja)
+}
+.message-text span.president {
+    background-color: var(--color-draw)
+}
+.message-text span.chancellor {
+    background-color: var(--color-discard)
+}
+.message-text span.highlight {
+    background-color: var(--color-nein);
+    color: var(--color-ja)
+}
+
+
+.chat .input {
+    height: 0;
+    margin: 0;
+    transition: 0.1s ease-in-out;
+}
+.chat .input * {
+    opacity: 0;
+    transition: 0.1s ease-in-out;
+}
+
+.chat:hover .input {
+    opacity: 1;
+    height: calc(4*var(--base-unit));
+    margin: calc(0.5*var(--base-unit)) calc(1*var(--base-unit));
+}
+
+.chat:hover .input * {
+    opacity: 1;
+}
+
+.chat .input .button {
+    width: 20%;
 }

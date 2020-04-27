@@ -37,6 +37,10 @@ function addChatMessageStatus(array $data, string $message) : void {
     addChatMessage($data['game'], "[game]", $message);
 }
 
+function clearChat(array $data) : void {
+    clearChatFile($data['game']);
+}
+
 // ========== IN PLACE MODIFIERS ========== //
 
 function setPhase(array &$data, string $phase) : void {
@@ -53,7 +57,7 @@ function advancePresident(array &$data) : void {
     } while (isDead($data, $data['players'][$data['president']]));
     $data['chancellor'] = $data['president'];
     $data['modifiers']['temporalPresidency'] = false;
-    addChatMessageStatus($data, 'The next president is '.$data['players'][$data['president']]);
+    addChatMessageStatus($data, 'The next president is p{'.$data['players'][$data['president']].'}');
 }
 
 function resetVotes(array &$data) : void {
@@ -97,10 +101,16 @@ function resetElectionTracker(array &$data) : void {
 
 function updateModifiers(array &$data) : void {
     if($data['fascistPolicies'] >= $data['triggersModifiers']['vetoEnabledAt']){
-        $data['modifiers']['vetoEnabled'] = true;
+        if(!$data['modifiers']['vetoEnabled']){;
+            addChatMessageStatus($data, "h{veto power} is now enabled");
+            $data['modifiers']['vetoEnabled'] = true;
+        }
     }
     if($data['fascistPolicies'] >= $data['triggersModifiers']['fascistEndGameAt']){
-        $data['modifiers']['fascistEndGame'] = true;
+        if(!$data['modifiers']['fascistEndGame']){
+            addChatMessageStatus($data, "From this point on, when c{hitler} is elected as chancellor, f{fascists win}.");
+            $data['modifiers']['fascistEndGame'] = true;
+        }
     }
 }
 
@@ -109,11 +119,15 @@ function checkPowersAndSetPhase(array &$data) : bool {
     $data['temporalPresidency'] = false;
     if (in_array($fpolicies, $data['triggersPowers']['selectPresidentAt'])){
         setPhase($data, 'PH_SELECT_PRES');  //-----> PH_SELECT_PRES (president chooses next president)
+        addChatMessageStatus($data, "p{power triggered}: The president selects a h{next president candidate}.");
     } elseif (in_array($fpolicies, $data['triggersPowers']['investigateAt'])){
+        addChatMessageStatus($data, "p{power triggered}: The president h{investigates a player}.");
         setPhase($data, 'PH_INVESTIGATE'); //-----> PH_INVESTIGATE (president investigates player)
     } elseif (in_array($fpolicies, $data['triggersPowers']['peakAt'])){
+        addChatMessageStatus($data, "p{power triggered}: The president h{looks at the top 3 policies}.");
         setPhase($data, 'PH_PEAK'); //-----> PH_PEAK (president checks top three policies)
     } elseif (in_array($fpolicies, $data['triggersPowers']['executeAt'])){
+        addChatMessageStatus($data, "p{power triggered}: The president h{executes a player}.");
         setPhase($data, 'PH_EXECUTE'); //-----> PH_EXECUTE (president kills a player)
     } else {
         return false; // nothing triggered
@@ -123,10 +137,12 @@ function checkPowersAndSetPhase(array &$data) : bool {
 
 function checkWinSituationAndSetPhase(array &$data) : bool {
     if($data['liberalPolicies'] >= $data['triggersModifiers']['liberalsWinAt']){
+        addChatMessageStatus($data, "l{Liberals won!}");
         setPhase($data, 'PH_LIBERALS_WON'); //-----> PH_LIBERALS_WON
         return true;
     }
     if($data['fascistPolicies'] >= $data['triggersModifiers']['fascistsWinAt']){
+        addChatMessageStatus($data, "f{fascists won!}");
         setPhase($data, 'PH_FASCISTS_WON'); //-----> PH_LIBERALS_WON
         return true;
     }
@@ -141,7 +157,7 @@ function enactPolicy(array &$data, int $policy) : void {
     } else {
         $data['fascistPolicies']++;
     }
-    addChatMessageStatus($data, ($policy ? "Fascist" : "Liberal")." policy was enacted.");
+    addChatMessageStatus($data, ($policy ? "f{Fascist}" : "l{Liberal}")." policy was enacted.");
     resetElectionTracker($data);
     resetVotes($data);
     updateModifiers($data);

@@ -13,10 +13,7 @@ var g_lobby = {
     players : null,
 };
 
-var g_chat = {
-    coutn : null,
-    messages : null,
-}
+var g_chat = null;
 
 // var g_playername = "verunka";
 var g_gameid = "sample";
@@ -24,11 +21,17 @@ var g_gameid = "sample";
 var g_errordialog = new ErrorDialog()
 var v;
 var e;
+var c;
 
 function main(){
     //#TODO: lobby
     
     AJAXgetGames(createGameList);
+    //AJAXgetLobby("čísla 2", "JEDNA", (r)=>joinGame("čísla 2"));
+    //AJAXgetGame("čísla 2", "JEDNA", createGame);
+
+    //AJAXgetChat("čísla 2", createChat);
+    //setTimeout(()=>clearInterval(refresher), 1000);
     
     //g_playername = "ondra";
     //AJAXgetGame("sample", "ondra", createGame);
@@ -64,16 +67,21 @@ class GameObject extends BaseObject {
                     joinGame(g_gameid);
                 }),
                 "back"
-            )).appendTo("body");
+            ))
         this.board = new Board(
             game.board,
             game.modifiers,
-            game.triggers).appendTo("body");
+            game.triggers)
         this.instruction = new InfoRow(
-            g_infotext[game.phase]).appendTo("body");
-        this.players = new Players(game.players).appendTo("body");
+            g_infotext[game.phase])
+        this.players = new Players(game.players)
         this.dialog = new DialogObject(null, null, null, null);
         this.update(game);
+        this.players.prependTo("body");
+        this.instruction.prependTo("body");
+        this.board.prependTo("body");
+        this.info.prependTo("body");
+        g_chat.scrollDown();
     }
     update(game){
         this.board.update(game.board);
@@ -83,12 +91,19 @@ class GameObject extends BaseObject {
             this.players.setClickCallback(null);
             this.instruction.update(g_infotext[game.phase]);
             this.phase = game.phase;
+            if(!Object.keys(this.players.players).includes(g_playername)){
+                this.instruction.update("You are specating. " + g_infotext[game.phase]);
+                return this
+            }
             switch (game.phase) {
                 case "PH_ELECT":
                     this.dialog.close();
                     if(game.thisPlayer.isPresident){
                         this.players.setClickCallback(function(){
-                            AJAXelect(g_gameid, g_playername, this.index, updateGame);
+                            new ConfirmDialog(
+                                "Are you sure you want to elect <span class=chancellor>" + this.name + "</span> as a chancellor?",
+                                ()=>AJAXelect(g_gameid, g_playername, this.index, updateGame)
+                            ).appendTo("body");
                         },
                         [...game.indexes.lastGovernment, ...game.indexes.deadPlayers, game.indexes.thisPlayer]);
                     }
@@ -139,7 +154,10 @@ class GameObject extends BaseObject {
                 case "PH_INVESTIGATE":
                     if(game.thisPlayer.isPresident){
                         this.players.setClickCallback(function(){
-                            AJAXinvestigate(g_gameid, g_playername, this.index, updateGame);
+                            new ConfirmDialog(
+                                "Are you sure you want to investigate <span class=highlight>" + this.name + "</span>'s identity?",
+                                ()=>AJAXinvestigate(g_gameid, g_playername, this.index, updateGame)
+                            ).appendTo("body");
                         },
                         [...game.indexes.deadPlayers, game.indexes.thisPlayer]);
                     }
@@ -160,8 +178,12 @@ class GameObject extends BaseObject {
 
                 case "PH_SELECT_PRES":
                     if(game.thisPlayer.isPresident){
+                        
                         this.players.setClickCallback(function(){
-                            AJAXselectPres(g_gameid, g_playername, this.index, updateGame);
+                            new ConfirmDialog(
+                                "Are you sure you want to elect <span class=president>" + this.name + "</span> as the next president?",
+                                ()=>AJAXselectPres(g_gameid, g_playername, this.index, updateGame)
+                            ).appendTo("body");
                         },
                         [...game.indexes.deadPlayers, game.indexes.thisPlayer]);
                     }
@@ -171,7 +193,10 @@ class GameObject extends BaseObject {
                 case "PH_EXECUTE":
                     if(game.thisPlayer.isPresident){
                         this.players.setClickCallback(function(){
-                            AJAXexecute(g_gameid, g_playername, this.index, updateGame);
+                            new ConfirmDialog(
+                                "Are you sure you want execute <span class=highlight>" + this.name + "</span>?",
+                                ()=>AJAXexecute(g_gameid, g_playername, this.index, updateGame)
+                            ).appendTo("body");
                         },
                         [...game.indexes.deadPlayers, game.indexes.thisPlayer]);
                     }

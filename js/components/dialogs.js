@@ -86,3 +86,11 @@ class ErrorDialog extends DialogObject {
         super("<span class=highlight>Error</span>: " + errortext, [], 'error', [ok_button]);
     }
 }
+
+class ConfirmDialog extends DialogObject {
+    constructor(question, callback) {
+        let yes_button = new VoteButton(true, callback).setText("Yes, quite.");
+        let no_button = new VoteButton(false, ()=>{}).setText("No...");
+        super(question, null, 'confirm', [yes_button, no_button]);
+    }
+}

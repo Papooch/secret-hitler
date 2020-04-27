@@ -41,6 +41,7 @@ function joinGame(string $game, string $player) : array {
         $lobby['players'][$player] = false;
         saveLobbyFile($game, $lobby);
     }
+    addChatMessageStatus($lobby, "j{".$player."} has joined");
     return constructReturnObjectLobby($lobby);
 }
 
@@ -80,6 +81,14 @@ function startGame(string $game, string $player) {
         return ["Some players are not ready!"];
     }
     $data = createGameData($game, array_keys($lobby['players']));
+    clearChat($data);
+    addChatMessageStatus($data,
+        "p{The game has started}! There are f{".count($data['fascists']).
+        " fascists, including hitler}, who ".
+        ($data['hitlerKnowsFascists'] ? "j{knows}" : "j{does not know}").
+        "who they are."
+    );
+    
     saveGameFile($game, $data);
     return constructReturnObjectGame($data, $player); 
 }
@@ -137,7 +146,7 @@ function selectChancellor(string $game, string $player, int $id) : array {
     $data['chancellor'] = $id;
     resetVotes($data);
     addChatMessageStatus($data,
-       "The president wants to elect ".$data['players'][$id]." as chancellor.");
+       "The president wants to elect c{".$data['players'][$id]."} as a chancellor.");
     setPhase($data, 'PH_VOTE'); //-----> PH_VOTE (everyone votes)
 
     saveGameFile($game, $data);
@@ -155,18 +164,22 @@ function vote(string $game, string $player, bool $vote) : array {
     $data['voting'][$player] = $vote;
     if(hasEveryoneVoted($data)){
         if(votePassed($data)){
-            addChatMessageStatus($data, "The vote passed!");
+            addChatMessageStatus($data, "The vote j{passed}!");
             setLastGovernment($data);
             setPhase($data, 'PH_DRAW'); //-----> PH_DRAW (president draws 3)
             if($data['modifiers']['fascistEndGame']){
                 if(isChancellorHitler($data)){
+                    addChatMessageStatus($data,
+                        "Hitler was elected as a chancellor. f{Fascists won}!");
                     setPhase($data, "PH_FASCISTS_WON"); //-----> PH_FASCISTS_WON
                 } else {
                     markChancellorNotHitler($data);
+                    addChatMessageStatus($data,
+                        "j{".$data['players'][$data['chancellor']]." is h{not hitler}!");
                 }
             } 
         } else {
-            addChatMessageStatus($data, "The vote failed!");
+            addChatMessageStatus($data, "The vote n{failed}!");
             advanceElectionTrackerAndCheckChaos($data);
             if(!checkWinSituationAndSetPhase($data)){ // next phase is decided by the function
                 resetLastGovernment($data);
@@ -245,8 +258,10 @@ function veto(string $game, string $player, bool $wants) : array {
     }
     if (isPresident($data, $player)){
         $data['wantsVeto']['president'] = $wants;
+        addChatMessageStatus($data, "The p{president} ".($wants?"j{wants":"n{does not want")." veto}");
     } elseif (isChancellor($data, $player)) {
         $data['wantsVeto']['chancellor'] = $wants;
+        addChatMessageStatus($data, "The c{chancellor} ".($wants?"j{wants":"n{does not want")." veto}");
     } else {
         return ["You are neither chancellor nor president"];
     }
@@ -255,7 +270,7 @@ function veto(string $game, string $player, bool $wants) : array {
     }
     if(bothExpressedVetoOpinion($data)){
         if (bothWantVeto($data)) {
-            addChatMessageStatus($data, "The government has agreed on veto.");
+            addChatMessageStatus($data, "The government has j{agreed on a veto}.");
             advanceElectionTrackerAndCheckChaos($data);
             resetLastGovernment($data);
             discardChancellorsHand($data);
@@ -336,7 +351,7 @@ function investigate(string $game, string $player, int $id) : array {
     }
 
     addChatMessageStatus($data,
-        "The president now knows who ".$data['players'][$id]." is.");
+        "The p{president} now knows who j{".$data['players'][$id]."} is.");
 
     array_push($data['knownIdentity'][$player], $id);
 
@@ -363,14 +378,14 @@ function execute(string $game, string $player, int $id) : array {
     }
     
     addChatMessageStatus($data,
-        "The president has executed ".$data['players'][$id].".");
+        "The president has h{executed ".$data['players'][$id]."}.");
 
     array_push($data['dead'], $id);
     
     if(isHitler($data, $data['players'][$id])){
         setPhase($data, 'PH_LIBERALS_WON'); //-----> PH_FASCISTS_WON (Hitler is killed)
         addChatMessageStatus($data,
-            "Hitler was killed, Liberals won!");
+            "Hitler was killed, l{Liberals won!}");
     }else{
         advancePresident($data);
         setPhase($data, 'PH_ELECT'); //-----> PH_ELECT (next president selects chancellor)
