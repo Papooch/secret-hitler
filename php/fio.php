@@ -100,7 +100,9 @@ function getGameFileList() : array {
     $gamehashes = array_slice(scandir(SH_GAME_DIR),2);
     $games = [];
     foreach ($gamehashes as $hash) {
-        $games[] = basename(scandir(SH_GAME_DIR.$hash)[2], ".json");
+        $dir = SH_GAME_DIR.$hash;
+        if(!is_dir($dir)) continue;
+        $games[] = basename(scandir($dir)[2], ".json");
     }
     return $games;
 }

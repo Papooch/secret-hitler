@@ -2,6 +2,7 @@
 
 // globl objects:
 var g_game = {
+    json : null,
     info : null,
     board : null,
     instruction: null,
@@ -18,7 +19,7 @@ var g_chat = null;
 // var g_playername = "verunka";
 var g_gameid = "sample";
 
-var g_errordialog = new ErrorDialog()
+var g_errordialog = new ErrorDialog().close();
 var v;
 var e;
 var c;
@@ -57,6 +58,7 @@ function main(){
 class GameObject extends BaseObject {
     constructor(game) {
         super();
+        this.json = game;
         this.phase = 'PH_START';
         this.info = new TopRow(
             "game: <span class=draw>" + g_gameid + "</span>, player: <span class=draw>" + g_playername + "</span>",
@@ -84,8 +86,8 @@ class GameObject extends BaseObject {
         g_chat.scrollDown();
     }
     update(game){
+        this.json = game;
         this.board.update(game.board);
-        console.log("updating game");
         this.players.update(game.players);
         if(game.phase != this.phase || game.phase == "PH_PEAK"){
             this.players.setClickCallback(null);

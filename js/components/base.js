@@ -66,6 +66,7 @@ class DialogObject extends BaseObject{
         this.items = [];
         this.buttons = [];
         this.name = name;
+        this.isOpen = true;
         this.el.addClass("dialog-wrapper opening ");
         this.el_dialog = $("<div></div>").addClass("dialog " + name);
         setTimeout(()=>this.el.removeClass("opening"), 300);
@@ -91,6 +92,7 @@ class DialogObject extends BaseObject{
         this.el.append(this.el_dialog);
     }
     close(timeout=0, callback=null){
+        this.isOpen = false;
         setTimeout(()=>{
             if(callback) callback();
             this.el.addClass("closing");
@@ -99,12 +101,13 @@ class DialogObject extends BaseObject{
     }
 }
 
-class ListItem extends  BaseObject {
+class ListItem extends BaseObject {
     constructor(texts, cssclasses, number=null, button=null){
         super();
         this.el.addClass("list-item");
         this.el_number = $("<div></div>").addClass("item-number").text(number);
         this.el.append(this.el_number);
+        this.text = texts;
         this.texts = [];
         texts.forEach((text, index) => {
             this.texts.push($("<span></span>").addClass("item-text " + cssclasses[index]).html(text).appendTo(this.el));
@@ -113,9 +116,6 @@ class ListItem extends  BaseObject {
         if(button){
             this.button.el.addClass("item-button").appendTo(this.el);
         }
-    }
-    setClickCallback(callback){
-        this.button.setClickCallback(callback);
     }
 }
 
@@ -141,6 +141,7 @@ class ListObject extends BaseObject {
     }
     update(items){
         this.el_list.empty();
+        this.items = [];
         items.forEach(item => {
             this.items.push(item.appendTo(this.el_list));
         });

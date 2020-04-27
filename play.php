@@ -24,8 +24,8 @@
 </head>
 <body id="body">
 <script>
-var g_gameid = "sample";
-var g_playername = "ondra";
+var g_gameid = "";
+var g_playername = "";
 </script>
 
 <?php

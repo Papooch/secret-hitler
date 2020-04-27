@@ -3,8 +3,8 @@
 var refresher = ()=>{};
 
 function updateGameList(r){
-    console.log(r);
-    console.log(r.payload);
+    //console.log(r);
+    //console.log(r.payload);
     g_lobby.games.update(r.payload);
 }
 
@@ -18,12 +18,19 @@ function createGameList(r){
 
 function updateLobby(r){
     checkChat(r);
-    console.log("updating lobby", r);
+
+    //Automatic enter to game TODO: make it optional
+    // if(r.payload.gameActive){
+    //     AJAXgetGame(g_gameid, g_playername, createGame);
+    //     return;
+    // }    
+    
     if(Object.keys(r.payload.players).includes(g_playername)){
         g_lobby.players.update(r.payload);
     }else{
+        g_errordialog = new ErrorDialog("You were kicked out.").appendTo("body");
         g_lobby.players.destroy();
-        createGameList();
+        AJAXgetGames(createGameList);
     }
 }
 

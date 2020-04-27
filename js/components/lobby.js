@@ -32,9 +32,15 @@ class GamesList extends ListObject {
         for (let i = 0; i < this.items.length - 1; i++) {
             this.items[i].el.remove();
         }
+        this.items = [this.items[this.items.length - 1]];
         for (let i = games.length - 1; i >= 0; i--) {
             let button = createJoinButton(games[i]);
             let listitem = new ListItem([games[i]],["game"], i+1, button);
+            listitem.setClickCallback(function(){
+                let d = new ConfirmDialog("Are you sure you want to delete "+ this.text[0]+"?",
+                ()=>AJAXdeleteGame(this.text[0], g_playername, updateGameList)
+                ).appendTo("body");
+            });
             this.items.unshift(listitem);
             this.el_list.prepend(listitem.el);
         }
@@ -49,7 +55,7 @@ function kickPlayer(name){
 function createPlayerInList(name, ready, i, button){
     let item = new ListItem(
         [(g_playername != name) ? name : "<span class=myname>" + name + "</span>",
-        (ready ? "ready" : "")],
+            (ready ? "ready" : "")],
         ["name", (ready ? "ready" : "not-ready")],
         i+1,
         (g_playername != name) ? button : null);
@@ -78,16 +84,21 @@ function createPlayButton(lobby){
     return button;
 }
 
+function createRestartButton(lobby){
+    let button = new ButtonObject(
+        "restart",
+        lobby.gameActive
+            ? ()=>AJAXstartGame(g_gameid, g_playername, createGame)
+            : ()=>{g_errordialog = new ErrorDialog("cannot restart game that has not started").appendTo("body")},
+        "start" + (lobby.gameActive ? " can-start" : ""));
+    return button;
+}
+
 class PlayersList extends ListObject {
     constructor(lobby){
         let players = lobby.players;
         let playerlist = [];
         let i = 0;
-        for (let [name, ready] of Object.entries(players)){
-            let button = new ButtonObject("kick", function(){kickPlayer(name)}, "kick");
-            playerlist.push(createPlayerInList(name, ready, i, button));
-            i++;
-        }
         let back_button = new ButtonObject(
                         "< Leave",
                         function(){
@@ -103,14 +114,26 @@ class PlayersList extends ListObject {
                             AJAXready(g_gameid, g_playername, true, updateLobby)},
                         "ready");
         let start_button = createPlayButton(lobby);
-        super(playerlist, "list-players", "Game: <span class=game>"+g_gameid+"</span>", [back_button, ready_button, start_button]);
+        let restart_button = createRestartButton(lobby);
+        let b_list = [back_button, ready_button, start_button];
+        if(lobby.thisPlayer.isCreator){
+            b_list = [back_button, ready_button, restart_button, start_button];
+        }
+        super(playerlist, "list-players", "Game: <span class=game>"+g_gameid+"</span>", b_list);
+        this.json = lobby;
+        this.update(lobby);
     }
     update(lobby){
+        this.json = lobby;
         let players = lobby.players;
         this.el_list.empty();
+        this.items = [];
         let i = 0;
         for (let [name, ready] of Object.entries(players)){
-            let button = new ButtonObject("kick", function(){kickPlayer(name)}, "kick");
+            let button = null;
+            if(lobby.thisPlayer.isCreator){
+                button = new ButtonObject("kick", function(){kickPlayer(name)}, "kick");
+            }
             let player = createPlayerInList(name, ready, i, button);
             this.items.push(player);
             this.el_list.append(player.el);

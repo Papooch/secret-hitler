@@ -38,11 +38,6 @@ function refreshGame() {
     AJAXgetGame(gameid, playername);
 }
 
-function drawError(error) {
-    $("#content").empty();
-    $("#content").append("ERROR: " + error);
-}
-
 function drawGame(game) {
 
     console.log(game);

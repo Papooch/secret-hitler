@@ -6,7 +6,14 @@ class Player extends BaseObject {
         this.name = name;
         this.index = index;
         this.info = info;
-        this.el_name = $("<div></div>").addClass("player-name").text(name);
+        function breakLongName(n){
+            if(n.length > 7){
+                return n.substr(0, 5) + " " + breakLongName(n.substr(5));
+            }
+            return(n);
+        }
+
+        this.el_name = $("<div></div>").addClass("player-name").html(breakLongName(name));
         this.el_inner = $("<div></div>").addClass("player-inner")
             .append(this.el_name);
         if(name == g_playername){this.el_inner.addClass("player-you")}

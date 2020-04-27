@@ -16,6 +16,13 @@ PH_FASCISTS_WON
 PH_LIBERALS_WON
 */
 
+$admins = ['SUDO'];
+
+function isAdmin($player){
+    global $admins;
+    return in_array($player, $admins);
+}
+
 
 /* ============================================ */
 /*= ============= PRIVATE HELPER ============== */
@@ -203,6 +210,10 @@ function isEveryoneReady(array $lobby){
         if(!$ready) return false;
     }
     return true;
+}
+
+function isCreator(array $lobby, string $player){
+    return $player == $lobby['creator'];
 }
 
 // --- GAME ---- //
@@ -500,8 +511,11 @@ function constructReturnObjectGame(array $data, string $player) : array {
     return $ret;
 }
 
-function constructReturnObjectLobby(array $lobby) : array {
-    $ret = $lobby;
+function constructReturnObjectLobby(array $lobby, string $player) : array {
+    $ret['game'] = $lobby['game'];
+    $ret['thisPlayer']['isCreator'] = isCreator($lobby, $player);
+    $ret['thisPlayer']['isAdmin'] = isAdmin($player);
+    $ret['players'] = $lobby['players'];
     $chat = loadChatFile($lobby['game']);
     $ret['chatMessageCount'] = count($chat['messages']);
     $ret['gameActive'] = isGameActive($lobby['game']);

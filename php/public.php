@@ -8,12 +8,12 @@ require('private.php');
 
 // ========== LOBBY ACCESS ========== //
 
-function getLobby(string $game) : array {
+function getLobby(string $game, string $player) : array {
     if(!isGame($game)){
         return [$game." does not exist"];
     }
     $lobby = loadLobbyFile($game);
-    return constructReturnObjectLobby($lobby);
+    return constructReturnObjectLobby($lobby, $player);
 }
 
 function createGame(string $game, string $player) : array {
@@ -24,8 +24,8 @@ function createGame(string $game, string $player) : array {
 }
 
 function deleteGame(string $game, string $player) : array {
-    if($player != "sudo") {
-
+    $lobby = loadLobbyFile($game);
+    if(!isAdmin($player) && !isCreator($lobby, $player)) {
         return ["you cannot do that!"];
     }
     deleteGameFiles($game);
@@ -42,32 +42,33 @@ function joinGame(string $game, string $player) : array {
         saveLobbyFile($game, $lobby);
     }
     addChatMessageStatus($lobby, "j{".$player."} has joined");
-    return constructReturnObjectLobby($lobby);
+    return constructReturnObjectLobby($lobby, $player);
 }
 
 function leaveGame(string $game, string $player) : array {
     $lobby = loadLobbyFile($game);
     unset($lobby['players'][$player]);
     saveLobbyFile($game, $lobby);
+    addChatMessageStatus($lobby, "n{".$player."} has left");
     return getGames();
 }
 
 
 function kickPlayer(string $game, string $player, string $kick) : array {
     $lobby = loadLobbyFile($game);
-    // if($player != $lobby['creator']){ # TODO: uncomment
-    //     return ["You can't kick players"];
-    // }
+    if(!isCreator($lobby, $player)){
+        return ["You can't kick players"];
+    }
     unset($lobby['players'][$kick]);
     saveLobbyFile($game, $lobby);
-    return constructReturnObjectLobby($lobby);
+    return constructReturnObjectLobby($lobby, $player);
 }
 
 function ready(string $game, string $player, bool $ready) : array {
     $lobby = loadLobbyFile($game);
     $lobby['players'][$player] = $ready;
     saveLobbyFile($game, $lobby);
-    return constructReturnObjectLobby($lobby);
+    return constructReturnObjectLobby($lobby, $player);
 }
 
 function startGame(string $game, string $player) {

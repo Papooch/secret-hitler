@@ -7,21 +7,26 @@ function getData(data=null, callback) {
         data: data,
         dataType: "json"
     }).fail((e)=>{
+        clearInterval(refresher);
         console.log(e);
-        drawError(e.responseText);
+        if(g_errordialog && g_errordialog.isOpen) return;
+        g_errordialog = new ErrorDialog(
+            "<span class=highlight>(BACKEND)</span>" + e.responseText
+            + "<br><br><span class=highlight>Please try refreshing the page and inform Ondra about this.</span>"
+            ).appendTo("body");
     }).then((r)=>{
         validateResponse(r, callback);
     });
 }
 
 function validateResponse(r, callback){
-    console.log(r);
+    //console.log(r);
     if(r.status == "ok"){
         callback(r);
     }else{
         console.log("ERROR: ", r.payload);
+        if(g_errordialog && g_errordialog.isOpen) return;
         g_errordialog = new ErrorDialog(r.payload).appendTo("body");
-        clearInterval(refresher);
     }
 }
 
@@ -30,7 +35,7 @@ function AJAXgetGames(callback) {
 }
 
 
-function AJAXgetLobby(game, player=null, callback) {
+function AJAXgetLobby(game, player, callback) {
     return getData({"action":"get_lobby", "game":game, "player":player}, callback);
 }
 
@@ -38,7 +43,7 @@ function AJAXleaveGame(game, player, callback) {
     return getData({"action":"leave","game":game, "player":player}, callback);
 }
 
-function AJAXcreateGame(game, player, callback) {
+function AJAXdeleteGame(game, player, callback) {
     return getData({"action":"delete","game":game, "player":player}, callback);
 }
 
