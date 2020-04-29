@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/hitler.css">
 
-    <script type="text/javascript" src="../jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="js/common.js"></script>
 
 
@@ -19,12 +19,35 @@
     </script>
     <style>
         body{
-            padding-top: 20%;
+            padding-top: 10%;
             text-align: center;
+        }
+        h1{
+            border-radius: 5px;
+            background-color: black;
+            color: rgb(236, 236, 236);
+            padding: 5px 15px;
+        }
+        a{
+            border-radius: 3px;
+            display: inline-block;
+            background-color: rgb(243, 41, 41);
+            padding: 2px 5px;
+            transition: 0.2s ease-in-out;
+            text-decoration: none;
+            color: black;
+            -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+            box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
+        }
+        a.blue{
+            background-color: rgb(3, 143, 230);
+        }
+        a:hover{
+            transform: scale(1.2);
         }
         .login{
             font-size: 120%;
-            border: solid black 1px;
             border-radius: 3px;
             width: 50%;
             max-width: 600px;
@@ -48,13 +71,17 @@
         }
         .login .button{
             border: none;
+            background-color: rgb(236, 236, 236);
+            padding: 5px 10px;
         }
         form{
             width: 100%;
         }
         .textfield{
+            font-size: 110%;
             width: 80%;
             max-width: 300px;
+            height: 50px;
             border: none;
             border-radius: 3px;
         }
@@ -62,7 +89,7 @@
 </head>
 
 <body id="body">
-<div>SECRET HITLER</div> <br>
+<h1>SECRET HITLER</h1> <br>
 <div class="login">
 <form action="play.php" method="post">
   <input class=textfield type="text" pattern=".{3,}" required id="player" name="player" placeholder="Your name"><br>
@@ -70,7 +97,9 @@
 </form>
 </div>
 <br>
-Created by Ondra Švanda, Verunka and Monička<br>
+<p>Implementation of the successfull <a class=red href="https://secrethitler.io/">board game</a>.
+Source on <a class=blue href="https://github.com/Papooch/secret-hitler">GitHub</a>.
+<br>Created by Ondra Švanda, Verunka and Monička</p>
 <br>
 Work in progress... <br>
 <script>
