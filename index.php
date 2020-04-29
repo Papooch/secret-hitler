@@ -20,6 +20,7 @@
     <style>
         body{
             padding-top: 20%;
+            text-align: center;
         }
         .login{
             font-size: 120%;
@@ -68,6 +69,10 @@
   <input class="button clickable" type="submit" value="Enter">
 </form>
 </div>
+<br>
+Created by Ondra Švanda, Verunka and Monička<br>
+<br>
+Work in progress... <br>
 <script>
     $("#player").on('input', restrictInput);
 </script>

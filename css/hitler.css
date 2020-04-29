@@ -801,6 +801,30 @@ body.liberals-won {
     right: calc(0.1*var(--base-unit));
 }
 
+
+.list-item .delete-button {
+    display: none;
+}
+
+.list-item .delete-button.visible {
+    display: block;
+    height: 85%;
+    right: calc(6*var(--base-unit));
+    background-image: url("../images/svg/icon-can.svg");
+    background-size: 60% 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    box-shadow: none;
+    opacity: 0.5;
+    /* padding: calc(2*var(--base-unit)) calc(0.5*var(--base-unit)); */
+}
+
+.list-item .delete-button.visible:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
 .list-item .button.create {
     font-size: calc(3*var(--base-unit));
 }
@@ -824,6 +848,7 @@ body.liberals-won {
     border-radius: 3px;
     background-color: var(--color-liberal);
 }
+
 
 .button.join {
     background-color: var(--color-ja);

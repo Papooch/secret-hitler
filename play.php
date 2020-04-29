@@ -8,7 +8,7 @@
 
     <title>Secret Hitler</title>
     
-    <script type="text/javascript" src="../jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="js/components/base.js"></script>
     <script type="text/javascript" src="js/components/board.js"></script>
     <script type="text/javascript" src="js/components/dialogs.js"></script>

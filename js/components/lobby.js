@@ -17,6 +17,10 @@ class GamesList extends ListObject {
         var input = new InputObject("", "create new", new ButtonObject("+", null, 'join create'));
         input.button.setClickCallback(()=>{
             let game = input.getValue();
+            if(game.length < 3){
+                g_errordialog = new ErrorDialog("Game name must be at least 3 characters long.").appendTo("body");
+                return;
+            }
             AJAXcreateGame(game, g_playername, ()=>joinGame(game));
         });
         input.el.addClass("list-item");
@@ -27,20 +31,32 @@ class GamesList extends ListObject {
             function(){window.location.replace("index.php")},
             "back");
         super(gamelist, "list-games", "Player: <span class=game>"+g_playername+"</span>", [back_button]);
+        this.update(games);
     }
     update(games){
+        let gamesstring = JSON.stringify(games);
+        if(gamesstring == this.jsonstring) return;
+        this.jsonstring = gamesstring;
         for (let i = 0; i < this.items.length - 1; i++) {
             this.items[i].el.remove();
         }
         this.items = [this.items[this.items.length - 1]];
         for (let i = games.length - 1; i >= 0; i--) {
             let button = createJoinButton(games[i]);
-            let listitem = new ListItem([games[i]],["game"], i+1, button);
-            listitem.setClickCallback(function(){
-                let d = new ConfirmDialog("Are you sure you want to delete "+ this.text[0]+"?",
-                ()=>AJAXdeleteGame(this.text[0], g_playername, updateGameList)
-                ).appendTo("body");
-            });
+
+            // A little hack to add a delete button if the player is creator
+            // (as a text, because I can't be bothered to modify the ListObject to allow more buttons)
+            let listitem = new ListItem([games[i], ""],["game", "button delete-button"], i+1, button);
+            AJAXgetLobby(listitem.text[0], g_playername, function(r){
+                if(!r.payload.thisPlayer.isCreator && !r.payload.thisPlayer.isAdmin) return;
+                this.texts[1].addClass('visible clickable');
+                listitem.texts[1].on('click', function(){
+                    new ConfirmDialog("Are you sure you want to delete "+ this.text[0]+"?",
+                        ()=>AJAXdeleteGame(this.text[0], g_playername, updateGameList)
+                    ).appendTo("body");
+                }.bind(listitem))
+            }.bind(listitem));
+
             this.items.unshift(listitem);
             this.el_list.prepend(listitem.el);
         }

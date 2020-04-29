@@ -10,6 +10,7 @@ require('private.php');
 
 function getLobby(string $game, string $player) : array {
     if(!isGame($game)){
+        global $response; $response['status'] = "rnok";
         return [$game." does not exist"];
     }
     $lobby = loadLobbyFile($game);
@@ -20,7 +21,7 @@ function createGame(string $game, string $player) : array {
     if(!createLobby($game, $player)){
         return ["cannot create game"];
     }
-    return joinGame($game, $player);
+    return getGames();
 }
 
 function deleteGame(string $game, string $player) : array {
@@ -29,7 +30,7 @@ function deleteGame(string $game, string $player) : array {
         return ["you cannot do that!"];
     }
     deleteGameFiles($game);
-    return getGameFileList();
+    return getGames();
 }
 
 function joinGame(string $game, string $player) : array {
@@ -120,6 +121,7 @@ function getGames() : array {
 
 function getGame(string $game, $player=null) : array {
     if(!isGame($game)){
+        global $response; $response['status'] = "rnok";
         return [$game." does not exist"];
     }
     $data = loadGameFile($game);

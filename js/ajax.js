@@ -26,7 +26,10 @@ function validateResponse(r, callback){
     }else{
         console.log("ERROR: ", r.payload);
         if(g_errordialog && g_errordialog.isOpen) return;
-        g_errordialog = new ErrorDialog(r.payload).appendTo("body");
+        g_errordialog = new ErrorDialog(
+            r.payload,
+            r.status == "rnok" ? ()=>location.reload() : null
+            ).appendTo("body");
     }
 }
 
