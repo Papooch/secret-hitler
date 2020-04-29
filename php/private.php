@@ -32,6 +32,16 @@ function isAdmin($player){
 
 function addChatMessage(string $game, string $player, string $message) : bool {
     # TODO: more input sanitisation
+    $message = str_replace("<", "&lt", $message);
+    $message = str_replace(">", "&gt", $message);
+
+    if($message[0] == '\\'){
+        if($message == "\\clc"){
+            clearChatFile($game);
+            return addChatMessage($game, '[info]', "h{The chat was cleared}");
+        }
+        return true;
+    }
     $message = str_replace("\"", "'", $message);
     $mes['time'] = date('Y-m-d, H:i:s');
     $mes['player'] = $player;

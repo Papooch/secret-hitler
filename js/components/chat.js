@@ -18,7 +18,8 @@ class ChatMessage extends BaseObject {
             );
         this.el_text = $("<div></div>").addClass("message-text")
             .html(this.text
-                    .replace(/\*(.+?)\*/g, "<b>$1</b>") // * -> bold
+                    .replace(/\*(.+?)\*/g, "<big>$1</big>") // * -> big
+                    .replace(/\~(.+?)\~/g, "<s>$1</s>") // * -> strikethrough
                     .replace(/_(.+?)_/g, "<i>$1</i>") // _ -> italic
                     .replace(/j\{([^\{]+?)}/g, "<span class=passed>$1</span>") // j{}
                     .replace(/n\{([^\{]+?)}/g, "<span class=failed>$1</span>") // n{}
@@ -48,6 +49,7 @@ class ChatBox extends BaseObject {
         let sendCallback = ()=>{
             let msg = this.input.getValue();
             this.input.setValue();
+            if(msg.length == 0) return;
             AJAXmessage(g_gameid, g_playername, msg, updateChat)
         }
         this.input.button.setClickCallback(sendCallback);
