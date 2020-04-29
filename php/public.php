@@ -39,10 +39,10 @@ function joinGame(string $game, string $player) : array {
         if(count($lobby['players']) >= 10){
             return ['There are already 10 players in the lobby.'];
         }
+        addChatMessageStatus($lobby, "j{".$player."} has joined");
         $lobby['players'][$player] = false;
         saveLobbyFile($game, $lobby);
     }
-    addChatMessageStatus($lobby, "j{".$player."} has joined");
     return constructReturnObjectLobby($lobby, $player);
 }
 
@@ -178,7 +178,7 @@ function vote(string $game, string $player, bool $vote) : array {
                 } else {
                     markChancellorNotHitler($data);
                     addChatMessageStatus($data,
-                        "j{".$data['players'][$data['chancellor']]." is h{not hitler}!");
+                        $data['players'][$data['chancellor']]." is h{not hitler}!");
                 }
             } 
         } else {

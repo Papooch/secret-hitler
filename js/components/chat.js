@@ -19,6 +19,7 @@ class ChatMessage extends BaseObject {
         this.el_text = $("<div></div>").addClass("message-text")
             .html(this.text
                     .replace(/\*(.+?)\*/g, "<big>$1</big>") // * -> big
+                    .replace(/\.(.+?)\./g, "<small>$1</small>") // * -> small
                     .replace(/\~(.+?)\~/g, "<s>$1</s>") // * -> strikethrough
                     .replace(/_(.+?)_/g, "<i>$1</i>") // _ -> italic
                     .replace(/j\{([^\{]+?)}/g, "<span class=passed>$1</span>") // j{}

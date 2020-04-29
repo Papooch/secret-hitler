@@ -101,7 +101,12 @@
 Source on <a class=blue href="https://github.com/Papooch/secret-hitler">GitHub</a>.
 <br>Created by Ondra Švanda, Verunka and Monička</p>
 <br>
-Work in progress... <br>
+<p>This is a work in progress... <br><small>
+Be aware that there is almost no security
+and anyone can log in as anyone else.
+<br>Please act responsibly.
+    </small>
+</p>
 <script>
     $("#player").on('input', restrictInput);
 </script>

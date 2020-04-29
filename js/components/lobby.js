@@ -147,7 +147,7 @@ class PlayersList extends ListObject {
         let i = 0;
         for (let [name, ready] of Object.entries(players)){
             let button = null;
-            if(lobby.thisPlayer.isCreator){
+            if(lobby.thisPlayer.isCreator || lobby.thisPlayer.isAdmin){
                 button = new ButtonObject("kick", function(){kickPlayer(name)}, "kick");
             }
             let player = createPlayerInList(name, ready, i, button);
