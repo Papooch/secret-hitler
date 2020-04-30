@@ -8,7 +8,7 @@ class Player extends BaseObject {
         this.info = info;
         function breakLongName(n){
             if(n.length > 7){
-                return n.substr(0, 5) + " " + breakLongName(n.substr(5));
+                return n.substr(0, 6) + "&shy;" + breakLongName(n.substr(6));
             }
             return(n);
         }

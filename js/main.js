@@ -16,43 +16,10 @@ var g_lobby = {
 
 var g_chat = null;
 
-// var g_playername = "verunka";
-var g_gameid = "sample";
-
 var g_errordialog = new ErrorDialog().close();
-var v;
-var e;
-var c;
 
 function main(){
-    //#TODO: lobby
-    
     AJAXgetGames(createGameList);
-    //AJAXgetLobby("čísla 2", "JEDNA", (r)=>joinGame("čísla 2"));
-    //AJAXgetGame("čísla 2", "JEDNA", createGame);
-
-    //AJAXgetChat("čísla 2", createChat);
-    //setTimeout(()=>clearInterval(refresher), 1000);
-    
-    //g_playername = "ondra";
-    //AJAXgetGame("sample", "ondra", createGame);
-    
-
-    // AJAXgetGame(g_gameid, g_playername)
-    // .then((r)=>{
-    //     let p = r.payload;
-    //     game.board = new Board(p.board, p.modifiers, p.triggers).appendTo("body");
-    //     game.players = new Players(p.players).appendTo("body");
-    // });
-
-    // let t = setTimeout(()=>{
-    //     game.board.drawPile.setClickCallback(()=>{let v = new GovernmentDialog([1,0,1], true).appendTo("body")});
-    //v = new GovernmentDialog([1,1], false, true).appendTo("body");
-    //e = new ErrorDialog("some error wtf??").appendTo("body");
-    //
-    //     v = new VoteDialog("Verunka", "Hrouda").appendTo("body");
-    // }, 500);
-
 }
 
 class GameObject extends BaseObject {
@@ -60,8 +27,23 @@ class GameObject extends BaseObject {
         super();
         this.json = game;
         this.phase = 'PH_START';
+        let topRowPlayerInfo = "";
+        if(!Object.keys(game.players).includes(g_playername)){
+            topRowPlayerInfo = "(spectator)";
+        } else {
+            /* This has to update when the game is restarted also */
+            // if(game.thisPlayer.isFascist){
+            //     topRowPlayerInfo = "<span class=fascist>fascist</span>"
+            // }else{
+            //     topRowPlayerInfo = "<span class=liberal>liberal</span>"
+            // }
+            // if(game.thisPlayer.isHitler){
+            //     topRowPlayerInfo = "<span class=highlight>Hitler</span>"
+            // }
+        }
+
         this.info = new TopRow(
-            "game: <span class=draw>" + g_gameid + "</span>, player: <span class=draw>" + g_playername + "</span>",
+            "game: <span class=draw>" + g_gameid + "</span>, player: <span class=draw>" + g_playername + "</span> " + topRowPlayerInfo,
             new ButtonObject(
                 "< BACK",
                 ()=>AJAXgetLobby(g_gameid, g_playername, (r)=>{
@@ -90,13 +72,10 @@ class GameObject extends BaseObject {
         this.board.update(game.board);
         this.players.update(game.players);
         if(game.phase != this.phase || game.phase == "PH_PEAK"){
+            this.phase = game.phase;
             this.players.setClickCallback(null);
             this.instruction.update(g_infotext[game.phase]);
-            this.phase = game.phase;
-            if(!Object.keys(this.players.players).includes(g_playername)){
-                this.instruction.update("You are specating. " + g_infotext[game.phase]);
-                return this
-            }
+            if(!Object.keys(game.players).includes(g_playername)) return;
             switch (game.phase) {
                 case "PH_ELECT":
                     this.dialog.close();
@@ -191,7 +170,6 @@ class GameObject extends BaseObject {
                     }
                     break;
             
-
                 case "PH_EXECUTE":
                     if(game.thisPlayer.isPresident){
                         this.players.setClickCallback(function(){
@@ -207,10 +185,12 @@ class GameObject extends BaseObject {
 
                 case "PH_FASCISTS_WON":
                     $("body").addClass("fascists-won");
+                    clearInterval(refresher);
                     break;
                     
                     case "PH_LIBERALS_WON":
                     $("body").addClass("liberals-won");
+                    clearInterval(refresher);
                     break;
 
                 default:

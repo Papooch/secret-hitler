@@ -12,7 +12,8 @@ function getData(data=null, callback) {
         if(g_errordialog && g_errordialog.isOpen) return;
         g_errordialog = new ErrorDialog(
             "<span class=highlight>(BACKEND)</span>" + e.responseText
-            + "<br><br><span class=highlight>Please try refreshing the page and inform Ondra about this.</span>"
+            + "<br><br><span class=highlight>Please try refreshing the page and inform Ondra about this.</span>",
+            ()=>location.reload()
             ).appendTo("body");
     }).then((r)=>{
         validateResponse(r, callback);

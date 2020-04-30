@@ -461,7 +461,9 @@ function constructReturnObjectGame(array $data, string $player) : array {
     $indexes['deadPlayers'] = $data['dead'];
     $indexes['lastGovernment'] = $data['lastGovernment'];
     $indexes['thisPlayer'] = array_search($player, $data['players']);
-    $indexes['president'] = $data['president'];
+    $indexes['president'] = $data['modifiers']['temporalPresidency']
+                            ? $data['temporaryPresident']
+                            : $data['president'];
     $indexes['chancellor'] = $data['chancellor'];
     $ret['indexes'] = $indexes;
     

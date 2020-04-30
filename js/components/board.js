@@ -142,7 +142,6 @@ class Board extends BaseObject {
 
     update(board) {
         if(JSON.stringify(board) == JSON.stringify(this.board)){
-            console.log("is same");
             return this; // no update needed;
         }
         this.board = board;

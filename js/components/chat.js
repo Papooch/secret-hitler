@@ -41,6 +41,8 @@ class ChatBox extends BaseObject {
         super();
         this.message_count = 1;
         this.el.addClass("chat");
+        this.el.focusin(()=>this.el.addClass("focused"));
+        this.el.focusout(()=>this.el.removeClass("focused"));
         this.messages = [];
         this.el_messages = $("<div></div>").addClass("messages");
         this.input = new InputObject("",
@@ -57,6 +59,8 @@ class ChatBox extends BaseObject {
         this.input.el_input.keyup((e)=>{
             if(e.key == "Enter"){
                 sendCallback()
+            }else if(e.key == "Escape"){
+                this.el.removeClass("focused");
             };
         })
         this.el.append(this.input.el);

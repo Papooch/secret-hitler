@@ -365,7 +365,7 @@ body.liberals-won {
     margin-top: calc(0.9*var(--base-unit));
     overflow-wrap: anywhere;
     word-wrap: break-all;
-    width: 120%;
+    width: 115%;
     font-size: calc(1*var(--base-unit));
     transform: rotate(0deg);
 }
@@ -1016,10 +1016,12 @@ body.liberals-won {
     padding: calc(0.1*var(--base-unit)) calc(0.3*var(--base-unit));
     border-radius: 3px;
 }
-.message-text span.fascist {   
+.message-text span.fascist,
+.info-text span.fascist {   
     background-color: var(--color-fascist);
 }
-.message-text span.liberal {
+.message-text span.liberal,
+.info-text span.liberal {
     background-color: var(--color-liberal);
 
 }
@@ -1052,13 +1054,15 @@ body.liberals-won {
     transition: 0.1s ease-in-out;
 }
 
-.chat:hover .input {
+.chat:hover .input,
+.chat.focused .input {
     opacity: 1;
     height: calc(4*var(--base-unit));
     margin: calc(0.5*var(--base-unit)) calc(1*var(--base-unit));
 }
 
-.chat:hover .input * {
+.chat:hover .input *,
+.chat.focused .input * {
     opacity: 1;
 }
 

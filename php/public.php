@@ -86,7 +86,7 @@ function startGame(string $game, string $player) {
     clearChat($data);
     addChatMessageStatus($data,
         "p{The game has started}! There are f{".count($data['fascists']).
-        " fascists, including hitler}, who ".
+        " fascists, including hitler} who ".
         ($data['hitlerKnowsFascists'] ? "j{knows}" : "j{does not know}").
         "who they are."
     );
