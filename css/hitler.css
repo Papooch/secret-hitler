@@ -69,6 +69,7 @@ body.liberals-won {
 .board {
     width: 100%;
     max-width: 750px;
+    min-height: calc(15*var(--base-unit));
     margin-left: auto;
     margin-right: auto;
     display: flex;

@@ -97,7 +97,7 @@
 </form>
 </div>
 <br>
-<p>Implementation of the successfull <a class=red href="https://secrethitler.io/">board game</a>.
+<p>Implementation of the successfull <a class=red href="https://secrethitler.com/">board game</a>.
 Source on <a class=blue href="https://github.com/Papooch/secret-hitler">GitHub</a>.
 <br>Created by Ondra Švanda, Verunka and Monička</p>
 <br>
