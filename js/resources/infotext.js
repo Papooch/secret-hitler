@@ -10,7 +10,7 @@ var g_infotext = {
     PH_ENFORCE: "Chancellor <span class=draw>enforces 1 policy</span>.",
     PH_INVESTIGATE: "President <span class=highlight>investigates a player</span>.",
     PH_PEAK: "President <span class=draw>looks at top 3</span> policies.",
-    PH_EXECUTE: "President <span class=highlight>kills a player</span>.",
+    PH_EXECUTE: "President <span class=highlight>executes a player</span>.",
     PH_SELECT_PRES: "President chooses <span class=draw>next president!</span>",
     PH_FASCISTS_WON: "Fascists won!",
     PH_LIBERALS_WON: "Liberals won!"

@@ -36,7 +36,6 @@ div {
 
 /* BOARD */
 
-
 body {
     background-color: white;
     padding: 0;
@@ -69,7 +68,6 @@ body.liberals-won {
 .board {
     width: 100%;
     max-width: 750px;
-    min-height: calc(15*var(--base-unit));
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -327,7 +325,7 @@ body.liberals-won {
     min-width: 64px;
     min-height: 85px;
     margin: calc(1.2*var(--base-unit));
-    margin-top: calc(3*var(--base-unit));
+    margin-top: calc(2*var(--base-unit));
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -439,7 +437,7 @@ body.liberals-won {
     vertical-align: middle;
     font-size: calc(1*var(--base-unit));
     padding: calc(0.2*var(--base-unit)) calc(0.5*var(--base-unit));
-    top: calc(-0.8*var(--base-unit));
+    top: calc(-1*var(--base-unit));
     z-index: 3;
     -webkit-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.75);
@@ -940,7 +938,7 @@ body.liberals-won {
     flex: 1 1 auto;
     width: 80%;
     max-width: 600px;
-    min-height: calc(3.5*var(--card-width));
+    min-height: calc(2.5*var(--card-width));
     border-radius: 5px;
     overflow-y: hidden;
     display: flex;
